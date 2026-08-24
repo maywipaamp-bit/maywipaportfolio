@@ -60,7 +60,7 @@ function optimize_image(string $path, int $maxW = 1400): void {
 }
 
 try {
-    if ($method !== 'GET') admin_guard();   // อ่านสาธารณะได้ แต่แก้ไขต้องล็อกอิน
+    if ($method !== 'GET' && $r !== 'view') admin_guard();   // อ่านสาธารณะได้ แต่แก้ไขต้องล็อกอิน
     $pdo = db(true);
 
     // ---------- read all ----------
@@ -73,6 +73,9 @@ try {
         $exps = $pdo->query("SELECT * FROM experiences ORDER BY sort_order,id")->fetchAll();
         $projs = $pdo->query("SELECT * FROM experience_projects ORDER BY sort_order,id")->fetchAll();
         $contacts = $pdo->query("SELECT * FROM contacts ORDER BY sort_order,id")->fetchAll();
+        $simages = $pdo->query("SELECT * FROM service_images ORDER BY sort_order,id")->fetchAll();
+        foreach ($services as &$sv) { $sv['images'] = array_values(array_filter($simages, fn($im) => $im['service_id'] == $sv['id'])); }
+        unset($sv);
         foreach ($works as &$w) {
             $w['tags'] = $w['tags'] !== '' ? array_values(array_filter(array_map('trim', explode(',', $w['tags'])))) : [];
             $w['images'] = array_values(array_filter($images, fn($im) => $im['work_id'] == $w['id']));
@@ -101,6 +104,14 @@ try {
         if (!move_uploaded_file($f['tmp_name'], "$dir/$name")) fail('บันทึกไฟล์ไม่ได้');
         optimize_image("$dir/$name");
         ok(['url' => "uploads/$name"]);
+    }
+
+    // ---------- view counter (public) ----------
+    if ($r === 'view' && $method === 'POST') {
+        $t = ($_GET['t'] ?? '') === 'service' ? 'services' : 'works';
+        $vid = (int) ($_GET['id'] ?? 0);
+        $pdo->prepare("UPDATE `$t` SET views = views + 1 WHERE id=?")->execute([$vid]);
+        ok();
     }
 
     // ---------- profile ----------
@@ -136,6 +147,18 @@ try {
         }
         if ($method === 'PUT') { update($pdo, 'work_images', $id, pick($b, ['url', 'sort_order'])); ok(); }
         if ($method === 'DELETE') { remove($pdo, 'work_images', $id); ok(); }
+    }
+
+    // ---------- service images ----------
+    if ($r === 'service_images') {
+        if ($method === 'POST') {
+            $sid = (int) ($_GET['service_id'] ?? 0);
+            $n = (int) $pdo->query("SELECT COUNT(*) FROM service_images WHERE service_id=$sid")->fetchColumn();
+            if ($n >= 5) fail('แนบได้สูงสุด 5 ภาพ', 400);
+            ok(['id' => insert($pdo, 'service_images', ['service_id' => $sid, 'url' => $b['url'] ?? '', 'sort_order' => $n])]);
+        }
+        if ($method === 'PUT') { update($pdo, 'service_images', $id, pick($b, ['url', 'sort_order'])); ok(); }
+        if ($method === 'DELETE') { remove($pdo, 'service_images', $id); ok(); }
     }
 
     // ---------- services ----------

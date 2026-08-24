@@ -197,6 +197,7 @@ window.ADMIN = true;
       const id = +cell.dataset.workId;
       const w = DATA.works.find(x => x.id === id);
       tagFor(cell, () => workForm(w), () => confirmDel(w.title, async () => { await api.del('api.php?r=works&id=' + id); reloadPortfolio(); toast('ลบแล้ว'); }));
+      const vb = document.createElement('div'); vb.className = 'view-badge'; vb.textContent = '👁 ' + (w.views || 0); cell.append(vb);
     });
     addButton(host, '+ เพิ่มผลงาน', () => workForm(null));
   }
@@ -208,6 +209,46 @@ window.ADMIN = true;
     bar.innerHTML = `<button class="btn btn-ghost btn-sm">แก้ไขผลงานนี้ (รวมรูปแกลเลอรี)</button>`;
     bar.querySelector('button').addEventListener('click', () => workForm(w));
     host.append(bar);
+  }
+
+  function renderServiceImages(slot, s) {
+    slot.innerHTML = `<div class="field"><label>รูปผลงานของบริการ (สูงสุด 5 ภาพ · ${(s.images || []).length}/5) — คลิกบริการหน้าเว็บเพื่อดูภาพ</label></div>`;
+    const list = document.createElement('div');
+    list.style.cssText = 'display:flex;flex-direction:column;gap:8px';
+    (s.images || []).forEach((im) => {
+      const row = document.createElement('div');
+      row.className = 'img-pick';
+      row.innerHTML = `<img class="preview" src="${im.url ? esc(asset(im.url)) : ''}" ${im.url ? '' : 'style="visibility:hidden"'}>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <input type="file" accept="image/*">
+          <button type="button" class="btn btn-danger btn-sm">ลบรูปนี้</button>
+        </div>`;
+      const fileInput = row.querySelector('input');
+      const prev = row.querySelector('.preview');
+      fileInput.addEventListener('change', async () => {
+        if (!fileInput.files[0]) return;
+        const { url, error } = await api.upload(fileInput.files[0]);
+        if (error) return toast(error);
+        await api.save('PUT', 'api.php?r=service_images&id=' + im.id, { url });
+        prev.src = asset(url); prev.style.visibility = 'visible'; im.url = url; toast('อัปเดตรูปแล้ว');
+      });
+      row.querySelector('button').addEventListener('click', async () => {
+        await api.del('api.php?r=service_images&id=' + im.id);
+        row.remove(); toast('ลบรูปแล้ว');
+      });
+      list.append(row);
+    });
+    slot.append(list);
+    if ((s.images || []).length < 5) {
+      const add = document.createElement('button');
+      add.className = 'btn btn-ghost btn-sm'; add.textContent = '+ เพิ่มรูป'; add.style.marginTop = '8px';
+      add.addEventListener('click', async () => {
+        const { id } = await api.save('POST', 'api.php?r=service_images&service_id=' + s.id, { url: '' });
+        s.images = s.images || []; s.images.push({ id, url: '' });
+        renderServiceImages(slot, s);
+      });
+      slot.append(add);
+    }
   }
 
   // ---- Services ----
@@ -222,6 +263,7 @@ window.ADMIN = true;
       ],
       values: s || {},
       onSave: (out) => s ? api.save('PUT', 'api.php?r=services&id=' + s.id, out) : api.save('POST', 'api.php?r=services', out),
+      extra: s ? (slot) => renderServiceImages(slot, s) : null,
     });
   }
   function decorateServices(host) {

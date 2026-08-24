@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS works (
   thumb       VARCHAR(255) NOT NULL DEFAULT '',   -- grid thumbnail
   cta_label   VARCHAR(80) NOT NULL DEFAULT '',     -- ปุ่มลิงก์ด้านล่าง
   cta_url     VARCHAR(255) NOT NULL DEFAULT '',
+  views       INT NOT NULL DEFAULT 0,
   sort_order  INT NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -44,6 +45,7 @@ CREATE TABLE IF NOT EXISTS services (
   icon       VARCHAR(30) NOT NULL DEFAULT 'document', -- document | table | chart
   title      VARCHAR(160) NOT NULL,
   subtitle   VARCHAR(200) NOT NULL DEFAULT '',
+  views      INT NOT NULL DEFAULT 0,
   sort_order INT NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -85,4 +87,13 @@ CREATE TABLE IF NOT EXISTS contacts (
   value      VARCHAR(160) NOT NULL,
   href       VARCHAR(255) NOT NULL DEFAULT '',
   sort_order INT NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Images per service (คลิกดูภาพผลงานของบริการ)
+CREATE TABLE IF NOT EXISTS service_images (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  service_id INT NOT NULL,
+  url        VARCHAR(255) NOT NULL DEFAULT '',
+  sort_order INT NOT NULL DEFAULT 0,
+  FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

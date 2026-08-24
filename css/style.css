@@ -251,3 +251,10 @@ body.admin .edit-tag{display:flex}
 .client-logo{overflow:hidden}
 .client-logo img{width:100%;height:100%;object-fit:cover;display:block}
 .clients-intro{margin:0;font-size:12.5px;line-height:1.7;color:var(--muted)}
+
+/* บริการที่มีรูป: คลิกดูได้ */
+.service-row.has-images{cursor:pointer}
+.service-view{margin-left:auto;flex:none;align-self:center;font-size:12px;font-weight:700;color:var(--primary);white-space:nowrap}
+.service-row.has-images:hover{background:var(--chip)}
+/* ป้ายจำนวนวิว (เฉพาะหน้า admin) */
+.view-badge{position:absolute;top:6px;left:6px;z-index:2;background:rgba(23,35,58,.72);color:#fff;font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;pointer-events:none}

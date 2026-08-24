@@ -47,6 +47,7 @@
     document.dispatchEvent(new CustomEvent('portfolio:loaded'));
   }
   window.reloadPortfolio = load;
+  const pingView = (t, id) => { try { fetch(BASE + 'api.php?r=view&t=' + t + '&id=' + id, { method: 'POST' }); } catch (e) {} };
 
   // ---------- header ----------
   function renderHeader() {
@@ -137,6 +138,7 @@
   // ---------- work detail: หน้าเต็มจอแยก ----------
   function openWorkScreen(w) {
     document.querySelectorAll('.work-screen, .ws-backdrop').forEach((n) => n.remove());
+    pingView('work', w.id);
     const filled = (w.images || []).filter((im) => im.url);
     const imgs = filled.length ? filled : [{ url: '' }];
     const backdrop = div('ws-backdrop');
@@ -208,14 +210,18 @@
   function servicesView() {
     const wrap = div('services');
     DATA.services.forEach((s) => {
-      wrap.append(frag(`
-        <div class="service-row editable" data-service-id="${s.id}">
+      const imgs = (s.images || []).filter((im) => im.url);
+      const row = frag(`
+        <div class="service-row editable${imgs.length ? ' has-images' : ''}" data-service-id="${s.id}">
           <div class="icon-tile">${ICONS[s.icon] || ICONS.document}</div>
           <div class="service-text">
             <span class="service-title">${esc(s.title)}</span>
             <span class="service-sub">${esc(s.subtitle)}</span>
           </div>
-        </div>`));
+          ${imgs.length ? '<span class="service-view">ดูภาพ ›</span>' : ''}
+        </div>`).firstElementChild;
+      if (imgs.length) row.addEventListener('click', () => { pingView('service', s.id); openLightbox(imgs, 0); });
+      wrap.append(row);
     });
     return wrap;
   }
@@ -223,7 +229,7 @@
   // ---------- clients ----------
   function clientsView() {
     const wrap = div('clients-wrap');
-    wrap.append(frag(`<span class="section-label">ลูกค้าที่ไว้วางใจ</span>`));
+    wrap.append(frag(`<span class="section-label">ลูกค้าที่เคยร่วมงานกับเรา</span>`));
     const intro = (DATA.profile && DATA.profile.clients_intro) || '';
     if (intro) wrap.append(frag(`<p class="clients-intro">${esc(intro)}</p>`));
     const grid = div('clients-grid');
