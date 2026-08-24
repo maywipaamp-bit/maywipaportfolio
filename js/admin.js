@@ -288,12 +288,26 @@ window.ADMIN = true;
     });
   }
   function decorateClients(host) {
-    host.querySelectorAll('.client-cell').forEach((cell) => {
+    const clients = DATA.clients;
+    host.querySelectorAll('.client-cell').forEach((cell, idx) => {
       const id = +cell.dataset.clientId;
-      const c = DATA.clients.find(x => x.id === id);
+      const c = clients.find(x => x.id === id);
       tagFor(cell, () => clientForm(c), () => confirmDel(c.name, async () => { await api.del('api.php?r=clients&id=' + id); reloadPortfolio(); }));
+      const bar = document.createElement('div');
+      bar.className = 'reorder-bar';
+      bar.innerHTML = `<button data-up ${idx === 0 ? 'disabled' : ''}>↑</button><button data-down ${idx === clients.length - 1 ? 'disabled' : ''}>↓</button>`;
+      bar.querySelector('[data-up]').addEventListener('click', (e) => { e.stopPropagation(); moveItem('clients', clients, idx, idx - 1); });
+      bar.querySelector('[data-down]').addEventListener('click', (e) => { e.stopPropagation(); moveItem('clients', clients, idx, idx + 1); });
+      cell.append(bar);
     });
     addButton(host, '+ เพิ่มลูกค้า', () => clientForm(null));
+  }
+  async function moveItem(resource, arr, from, to) {
+    if (to < 0 || to >= arr.length) return;
+    const list = arr.slice();
+    const [m] = list.splice(from, 1); list.splice(to, 0, m);
+    await Promise.all(list.map((it, i) => api.save('PUT', 'api.php?r=' + resource + '&id=' + it.id, { sort_order: i })));
+    reloadPortfolio(); toast('จัดลำดับแล้ว');
   }
 
   // ---- Experience ----

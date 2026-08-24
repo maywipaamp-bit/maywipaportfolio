@@ -258,3 +258,9 @@ body.admin .edit-tag{display:flex}
 .service-row.has-images:hover{background:var(--chip)}
 /* ป้ายจำนวนวิว (เฉพาะหน้า admin) */
 .view-badge{position:absolute;top:6px;left:6px;z-index:2;background:rgba(23,35,58,.72);color:#fff;font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;pointer-events:none}
+
+/* ปุ่มจัดลำดับ (หน้า admin) */
+.reorder-bar{display:flex;gap:4px;justify-content:center;margin-top:5px}
+.reorder-bar button{width:26px;height:22px;border:1px solid var(--border);background:#fff;border-radius:6px;cursor:pointer;font-size:12px;color:var(--body);line-height:1;padding:0;font-family:inherit}
+.reorder-bar button:hover:not(:disabled){background:var(--chip);color:var(--primary)}
+.reorder-bar button:disabled{opacity:.35;cursor:default}
