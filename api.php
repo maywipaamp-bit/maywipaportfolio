@@ -105,7 +105,7 @@ try {
 
     // ---------- profile ----------
     if ($r === 'profile' && $method === 'PUT') {
-        update($pdo, 'profile', 1, pick(body(), ['name', 'bio', 'photo', 'footer']));
+        update($pdo, 'profile', 1, pick(body(), ['name', 'bio', 'photo', 'footer', 'clients_intro']));
         ok();
     }
 

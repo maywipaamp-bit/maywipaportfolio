@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS profile (
   bio       TEXT NOT NULL,
   photo     VARCHAR(255) NOT NULL DEFAULT '',
   footer    VARCHAR(160) NOT NULL DEFAULT '',
+  clients_intro VARCHAR(500) NOT NULL DEFAULT '',
   CHECK (id = 1)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

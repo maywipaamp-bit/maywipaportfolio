@@ -368,6 +368,7 @@ window.ADMIN = true;
           { name: 'name', label: 'ชื่อ', type: 'text' },
           { name: 'bio', label: 'คำแนะนำตัว', type: 'textarea' },
           { name: 'footer', label: 'ข้อความท้ายหน้า', type: 'text' },
+          { name: 'clients_intro', label: 'ข้อความใต้หัวข้อ "ลูกค้าที่ไว้วางใจ"', type: 'textarea', hint: 'อธิบายประเภทงาน/ลูกค้า โทนน่าเชื่อถือ' },
         ],
         values: p,
         onSave: (out) => api.save('PUT', 'api.php?r=profile', out),

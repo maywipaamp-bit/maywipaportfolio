@@ -50,6 +50,8 @@ function migrate(PDO $pdo) {
     $add('works', 'cta_label', "VARCHAR(80) NOT NULL DEFAULT ''");
     $add('works', 'cta_url', "VARCHAR(255) NOT NULL DEFAULT ''");
     $add('experience_projects', 'logo', "VARCHAR(255) NOT NULL DEFAULT '' AFTER meta");
+    $add('profile', 'clients_intro', "VARCHAR(500) NOT NULL DEFAULT '' AFTER footer");
+    $pdo->prepare("UPDATE profile SET clients_intro=? WHERE id=1 AND clients_intro=''")->execute(['รับงานพัฒนาระบบและจัดทำเอกสารซอฟต์แวร์ให้ทั้งหน่วยงานราชการ บริษัทเอกชน และธุรกิจ SME ด้วยมาตรฐานงานที่ถูกต้อง ครบถ้วน ส่งมอบตรงเวลา ตั้งแต่คู่มือการใช้งานระบบ เอกสารประกอบระบบ ไปจนถึงการวิเคราะห์ข้อมูลและจัดทำรายงาน']);
     // จัดลำดับช่องทางติดต่อ: LINE, เบอร์, อีเมล
     $pdo->exec("UPDATE contacts SET sort_order=0 WHERE grp='contact' AND icon='line'");
     $pdo->exec("UPDATE contacts SET sort_order=1 WHERE grp='contact' AND icon='phone'");
@@ -59,11 +61,12 @@ function migrate(PDO $pdo) {
 
 function seed(PDO $pdo) {
     if (count_rows($pdo, 'profile') === 0) {
-        $pdo->prepare("INSERT INTO profile (id,name,bio,photo,footer) VALUES (1,?,?,?,?)")->execute([
+        $pdo->prepare("INSERT INTO profile (id,name,bio,photo,footer,clients_intro) VALUES (1,?,?,?,?,?)")->execute([
             'Maywipa.am',
             'สวัสดีค่ะ ฉันชื่อเมย์ นักวิเคราะห์ข้อมูลและผู้เชี่ยวชาญด้านเอกสารระบบสารสนเทศ รับทำคู่มือการใช้งานระบบ คีย์ข้อมูล และจัดทำรายงาน ถูกต้อง ตรงเวลา ดูแลงานของคุณทุกขั้นตอนค่ะ',
             'uploads/img-am.png',
             '© 2026 Maywipa.am · Portfolio',
+            'รับงานพัฒนาระบบและจัดทำเอกสารซอฟต์แวร์ให้ทั้งหน่วยงานราชการ บริษัทเอกชน และธุรกิจ SME ด้วยมาตรฐานงานที่ถูกต้อง ครบถ้วน ส่งมอบตรงเวลา ตั้งแต่คู่มือการใช้งานระบบ เอกสารประกอบระบบ ไปจนถึงการวิเคราะห์ข้อมูลและจัดทำรายงาน',
         ]);
         say("  · seeded profile");
     }

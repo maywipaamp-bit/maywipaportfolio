@@ -224,6 +224,8 @@
   function clientsView() {
     const wrap = div('clients-wrap');
     wrap.append(frag(`<span class="section-label">ลูกค้าที่ไว้วางใจ</span>`));
+    const intro = (DATA.profile && DATA.profile.clients_intro) || '';
+    if (intro) wrap.append(frag(`<p class="clients-intro">${esc(intro)}</p>`));
     const grid = div('clients-grid');
     DATA.clients.forEach((c) => {
       grid.append(frag(`
