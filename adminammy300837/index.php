@@ -1,3 +1,4 @@
+<?php require __DIR__ . '/../auth.php'; admin_guard(); ?>
 <!DOCTYPE html>
 <html lang="th">
 <head>

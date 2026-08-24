@@ -9,4 +9,7 @@ return [
     'user' => getenv('DB_USER') ?: 'root',
     'pass' => getenv('DB_PASSWORD') !== false ? getenv('DB_PASSWORD') : '',   // <-- ใส่รหัสผ่าน MySQL ที่นี่
     'name' => getenv('DB_NAME') ?: 'maywipa_portfolio',
+    // บัญชีเข้าหน้า admin (Basic Auth) — ตั้งรหัสก่อนใช้งานจริง
+    'admin_user' => getenv('ADMIN_USER') ?: 'admin',
+    'admin_pass' => getenv('ADMIN_PASS') !== false ? getenv('ADMIN_PASS') : '',   // <-- ตั้งรหัสผ่าน admin ที่นี่
 ];

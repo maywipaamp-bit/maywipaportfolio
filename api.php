@@ -1,6 +1,7 @@
 <?php
 // REST-style API (single entry). ใช้ผ่าน  api.php?r=<resource>&id=<id>  ตาม HTTP method
 require __DIR__ . '/db.php';
+require __DIR__ . '/auth.php';
 header('Content-Type: application/json; charset=utf-8');
 
 $method = $_SERVER['REQUEST_METHOD'];
@@ -38,6 +39,7 @@ function ok($x = ['ok' => true]) { echo json_encode($x, JSON_UNESCAPED_UNICODE);
 function fail($msg, $code = 500) { http_response_code($code); echo json_encode(['error' => $msg], JSON_UNESCAPED_UNICODE); exit; }
 
 try {
+    if ($method !== 'GET') admin_guard();   // อ่านสาธารณะได้ แต่แก้ไขต้องล็อกอิน
     $pdo = db(true);
 
     // ---------- read all ----------

@@ -1,0 +1,20 @@
+# ---- Maywipa portfolio (Apache / InfinityFree) ----
+
+# ส่ง Authorization header ให้ PHP เห็น (จำเป็นสำหรับ Basic Auth บน CGI/FastCGI)
+CGIPassAuth On
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
+# ให้เปิดโฟลเดอร์แล้วเจอ index.php
+DirectoryIndex index.php index.html
+
+# กันไม่ให้เข้าถึงไฟล์ลับตรงๆ
+<FilesMatch "^(config\.php|config\.example\.php|auth\.php|db\.php|schema\.sql|\.htaccess|README\.md)$">
+  Require all denied
+</FilesMatch>
+
+# UTF-8
+AddDefaultCharset UTF-8
