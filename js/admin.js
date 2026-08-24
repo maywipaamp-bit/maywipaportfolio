@@ -270,18 +270,34 @@ window.ADMIN = true;
     });
   }
   function renderExpProjects(slot, e) {
-    slot.innerHTML = `<div class="field"><label>โปรเจคที่เคยทำ</label></div>`;
+    slot.innerHTML = `<div class="field"><label>โปรเจคที่เคยทำ (แนบโลโก้ได้)</label></div>`;
     const list = document.createElement('div');
-    list.style.cssText = 'display:flex;flex-direction:column;gap:6px';
+    list.style.cssText = 'display:flex;flex-direction:column;gap:10px';
     (e.projects || []).forEach((p) => {
       const row = document.createElement('div');
-      row.style.cssText = 'display:flex;gap:6px;align-items:center';
-      row.innerHTML = `<div style="flex:1">
+      row.style.cssText = 'display:flex;gap:8px;align-items:center';
+      row.innerHTML = `
+        <img class="proj-logo-prev" src="${p.logo ? esc(asset(p.logo)) : ''}" style="width:38px;height:38px;border-radius:8px;object-fit:cover;background:var(--tile);border:1px solid var(--border);flex:none${p.logo ? '' : ';visibility:hidden'}">
+        <input type="file" accept="image/*" data-logo style="display:none">
+        <button type="button" class="btn btn-ghost btn-sm" data-pick style="flex:none">โลโก้</button>
+        <div style="flex:1;min-width:0">
           <input type="text" data-n value="${esc(p.name)}" placeholder="ชื่อโปรเจค" style="width:100%;margin-bottom:4px;border:1px solid #d5e2f5;border-radius:8px;padding:6px 9px;font-family:inherit">
           <input type="text" data-m value="${esc(p.meta)}" placeholder="หน่วยงาน · บทบาท" style="width:100%;border:1px solid #d5e2f5;border-radius:8px;padding:6px 9px;font-family:inherit">
         </div>
-        <button type="button" class="btn btn-ghost btn-sm" data-save>บันทึก</button>
-        <button type="button" class="btn btn-danger btn-sm" data-del>ลบ</button>`;
+        <button type="button" class="btn btn-ghost btn-sm" data-save style="flex:none">บันทึก</button>
+        <button type="button" class="btn btn-danger btn-sm" data-del style="flex:none">ลบ</button>`;
+      const prev = row.querySelector('.proj-logo-prev');
+      const file = row.querySelector('[data-logo]');
+      row.querySelector('[data-pick]').addEventListener('click', () => file.click());
+      file.addEventListener('change', async () => {
+        if (!file.files[0]) return;
+        toast('กำลังอัปโหลด...');
+        const { url, error } = await api.upload(file.files[0]);
+        if (error) return toast('อัปโหลดไม่สำเร็จ: ' + error);
+        p.logo = url; prev.src = asset(url); prev.style.visibility = 'visible';
+        await api.save('PUT', 'api.php?r=exp_projects&id=' + p.id, { logo: url });
+        toast('อัปโหลดโลโก้แล้ว');
+      });
       row.querySelector('[data-save]').addEventListener('click', async () => {
         await api.save('PUT', 'api.php?r=exp_projects&id=' + p.id, { name: row.querySelector('[data-n]').value, meta: row.querySelector('[data-m]').value });
         toast('บันทึกโปรเจคแล้ว');
@@ -294,7 +310,7 @@ window.ADMIN = true;
     add.className = 'btn btn-ghost btn-sm'; add.textContent = '+ เพิ่มโปรเจค'; add.style.marginTop = '8px';
     add.addEventListener('click', async () => {
       const { id } = await api.save('POST', 'api.php?r=exp_projects&exp_id=' + e.id, { name: 'โปรเจคใหม่', meta: '' });
-      e.projects = e.projects || []; e.projects.push({ id, name: 'โปรเจคใหม่', meta: '' });
+      e.projects = e.projects || []; e.projects.push({ id, name: 'โปรเจคใหม่', meta: '', logo: '' });
       renderExpProjects(slot, e);
     });
     slot.append(add);
@@ -325,6 +341,7 @@ window.ADMIN = true;
         { name: 'label', label: 'ป้ายกำกับ', type: 'text', hint: 'เช่น อีเมล, LINE ID' },
         { name: 'value', label: 'ค่าที่แสดง', type: 'text' },
         { name: 'href', label: 'ลิงก์ (href)', type: 'text', hint: 'เช่น mailto:.., tel:.., https://..' },
+        { name: 'sort_order', label: 'ลำดับการแสดง', type: 'text', hint: 'เลขน้อย = แสดงก่อน (เช่น LINE=0, เบอร์=1, อีเมล=2)' },
       ],
       values: c || { grp: grp || 'contact' },
       onSave: (out) => c ? api.save('PUT', 'api.php?r=contacts&id=' + c.id, out) : api.save('POST', 'api.php?r=contacts', out),

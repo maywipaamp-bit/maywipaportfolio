@@ -255,7 +255,7 @@
         list.hidden = !open;
         e.projects.forEach((p) => list.append(frag(`
           <div class="proj-row">
-            <div class="proj-icon">${ICONS.building}</div>
+            <div class="proj-icon">${p.logo ? `<img src="${esc(asset(p.logo))}" alt="" loading="lazy">` : ICONS.building}</div>
             <div class="proj-text"><span class="proj-name">${esc(p.name)}</span><span class="proj-meta">${esc(p.meta)}</span></div>
           </div>`)));
         toggle.addEventListener('click', () => {

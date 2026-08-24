@@ -25,6 +25,7 @@ try {
     }
     say("✔ สร้างตารางครบแล้ว");
 
+    migrate($pdo);
     seed($pdo);
     say($nl . "เสร็จเรียบร้อย! เปิดเว็บได้ที่  /portfolio/  (อย่าลืมลบ setup.php ทิ้ง)");
 } catch (Throwable $e) {
@@ -36,6 +37,25 @@ try {
 }
 
 function count_rows(PDO $p, string $t): int { return (int) $p->query("SELECT COUNT(*) FROM `$t`")->fetchColumn(); }
+
+// อัปเกรดตารางเดิม (เพิ่มคอลัมน์ที่ขาด + จัดลำดับติดต่อ) — ปลอดภัยรันซ้ำ
+function migrate(PDO $pdo) {
+    $add = function ($table, $col, $def) use ($pdo) {
+        if (!$pdo->query("SHOW COLUMNS FROM `$table` LIKE '$col'")->fetch()) {
+            $pdo->exec("ALTER TABLE `$table` ADD COLUMN $col $def");
+            say("  + เพิ่มคอลัมน์ $table.$col");
+        }
+    };
+    $add('works', 'category', "VARCHAR(60) NOT NULL DEFAULT '' AFTER tags");
+    $add('works', 'cta_label', "VARCHAR(80) NOT NULL DEFAULT ''");
+    $add('works', 'cta_url', "VARCHAR(255) NOT NULL DEFAULT ''");
+    $add('experience_projects', 'logo', "VARCHAR(255) NOT NULL DEFAULT '' AFTER meta");
+    // จัดลำดับช่องทางติดต่อ: LINE, เบอร์, อีเมล
+    $pdo->exec("UPDATE contacts SET sort_order=0 WHERE grp='contact' AND icon='line'");
+    $pdo->exec("UPDATE contacts SET sort_order=1 WHERE grp='contact' AND icon='phone'");
+    $pdo->exec("UPDATE contacts SET sort_order=2 WHERE grp='contact' AND icon='mail'");
+    say("  · อัปเกรดโครงสร้าง/ลำดับเรียบร้อย");
+}
 
 function seed(PDO $pdo) {
     if (count_rows($pdo, 'profile') === 0) {
@@ -98,9 +118,9 @@ function seed(PDO $pdo) {
     }
     if (count_rows($pdo, 'contacts') === 0) {
         $rows = [
-            ['contact', 'mail', 'อีเมล', 'maywipa@email.com', 'mailto:maywipa@email.com'],
-            ['contact', 'phone', 'โทรศัพท์', '081-234-5678', 'tel:0812345678'],
             ['contact', 'line', 'LINE ID', '@maywipa', 'https://line.me/ti/p/~maywipa'],
+            ['contact', 'phone', 'โทรศัพท์', '081-234-5678', 'tel:0812345678'],
+            ['contact', 'mail', 'อีเมล', 'maywipa@email.com', 'mailto:maywipa@email.com'],
             ['social', 'instagram', 'Instagram', '@maywipa.am', 'https://instagram.com/maywipa.am'],
             ['social', 'facebook', 'Facebook', 'Maywipa.am', 'https://facebook.com/maywipa.am'],
             ['social', 'tiktok', 'TikTok', '@maywipa.am', 'https://tiktok.com/@maywipa.am'],

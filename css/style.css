@@ -32,8 +32,8 @@ img{display:block;max-width:100%}
 }
 
 /* header */
-.header{padding:26px 20px 18px;display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;text-align:center}
-.avatar{width:104px;height:104px;flex:none;border:3px solid var(--accent);border-radius:50%;object-fit:cover;background:#eef5ff}
+.header{padding:24px 20px 18px;display:flex;flex-direction:column;align-items:center;gap:7px;position:relative;text-align:center}
+.avatar{width:104px;height:104px;flex:none;border:3px solid var(--accent);border-radius:50%;object-fit:cover;background:#eef5ff;margin-bottom:5px}
 .name{font-size:20px;font-weight:700;letter-spacing:-0.01em}
 .bio{margin:0;font-size:13px;line-height:1.7;color:var(--muted);max-width:320px}
 
@@ -244,3 +244,9 @@ body.admin .edit-tag{display:flex}
 .ws-carousel{cursor:grab}
 .ws-carousel.drag{cursor:grabbing}
 .ws-carousel.drag .ws-slide img{pointer-events:none}
+
+/* โลโก้ในโปรเจค (ประสบการณ์) + ลูกค้า: ครอบตัดพอดีกรอบ ไม่ล้น */
+.proj-icon{overflow:hidden}
+.proj-icon img{width:100%;height:100%;object-fit:cover;display:block}
+.client-logo{overflow:hidden}
+.client-logo img{width:100%;height:100%;object-fit:cover;display:block}

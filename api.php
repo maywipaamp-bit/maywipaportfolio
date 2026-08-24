@@ -165,9 +165,9 @@ try {
     if ($r === 'exp_projects') {
         if ($method === 'POST') {
             $eid = (int) ($_GET['exp_id'] ?? 0);
-            ok(['id' => insert($pdo, 'experience_projects', pick($b, ['name', 'meta', 'sort_order']) + ['experience_id' => $eid])]);
+            ok(['id' => insert($pdo, 'experience_projects', pick($b, ['name', 'meta', 'logo', 'sort_order']) + ['experience_id' => $eid])]);
         }
-        if ($method === 'PUT') { update($pdo, 'experience_projects', $id, pick($b, ['name', 'meta', 'sort_order'])); ok(); }
+        if ($method === 'PUT') { update($pdo, 'experience_projects', $id, pick($b, ['name', 'meta', 'logo', 'sort_order'])); ok(); }
         if ($method === 'DELETE') { remove($pdo, 'experience_projects', $id); ok(); }
     }
 
