@@ -137,7 +137,8 @@
   // ---------- work detail: หน้าเต็มจอแยก ----------
   function openWorkScreen(w) {
     document.querySelectorAll('.work-screen, .ws-backdrop').forEach((n) => n.remove());
-    const imgs = (w.images && w.images.length) ? w.images : [{ url: '' }];
+    const filled = (w.images || []).filter((im) => im.url);
+    const imgs = filled.length ? filled : [{ url: '' }];
     const backdrop = div('ws-backdrop');
     const scr = div('work-screen');
     scr.innerHTML = `
@@ -227,8 +228,7 @@
     DATA.clients.forEach((c) => {
       grid.append(frag(`
         <div class="client-cell editable" data-client-id="${c.id}">
-          ${media(c.logo, 'client-logo', 'โลโก้')}
-          <span class="client-name">${esc(c.name)}</span>
+          ${media(c.logo, 'client-logo', 'โลโก้')}
         </div>`));
     });
     wrap.append(grid);

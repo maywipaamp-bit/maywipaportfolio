@@ -130,6 +130,7 @@ try {
         if ($method === 'POST') {
             $wid = (int) ($_GET['work_id'] ?? 0);
             $n = (int) $pdo->query("SELECT COUNT(*) FROM work_images WHERE work_id=$wid")->fetchColumn();
+            if ($n >= 5) fail('แนบได้สูงสุด 5 ภาพ', 400);
             $iid = insert($pdo, 'work_images', ['work_id' => $wid, 'url' => $b['url'] ?? '', 'sort_order' => $n]);
             ok(['id' => $iid]);
         }

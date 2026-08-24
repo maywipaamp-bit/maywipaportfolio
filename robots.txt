@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /adminammy300837/
+Disallow: /api.php
+Disallow: /setup.php
+
+Sitemap: https://maywipa.com/sitemap.xml

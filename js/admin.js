@@ -155,7 +155,7 @@ window.ADMIN = true;
     });
   }
   function renderWorkImages(slot, w) {
-    slot.innerHTML = `<div class="field"><label>รูปในแกลเลอรี (เลื่อนดูได้)</label></div>`;
+    slot.innerHTML = `<div class="field"><label>รูปในแกลเลอรี (สูงสุด 5 ภาพ · ${(w.images || []).length}/5)</label></div>`;
     const list = document.createElement('div');
     list.style.cssText = 'display:flex;flex-direction:column;gap:8px';
     (w.images || []).forEach((im) => {
@@ -185,6 +185,7 @@ window.ADMIN = true;
     const add = document.createElement('button');
     add.className = 'btn btn-ghost btn-sm'; add.textContent = '+ เพิ่มรูป'; add.style.marginTop = '8px';
     add.addEventListener('click', async () => {
+      if ((w.images || []).length >= 5) { toast('แนบได้สูงสุด 5 ภาพ'); return; }
       const { id } = await api.save('POST', 'api.php?r=work_images&work_id=' + w.id, { url: '' });
       w.images.push({ id, url: '' });
       renderWorkImages(slot, w);
