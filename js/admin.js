@@ -103,14 +103,14 @@ window.ADMIN = true;
   // ---------- edit chrome per view ----------
   const AdminChrome = {
     decorate(tab, state, host) {
-      if (tab === 'works' && state.work === 0) decorateWorksGrid(host);
-      else if (tab === 'works') decorateWorkDetail(host, state);
+      if (tab === 'works') decorateWorksGrid(host);
       else if (tab === 'services') decorateServices(host);
       else if (tab === 'clients') decorateClients(host);
       else if (tab === 'exp') decorateExp(host);
       else if (tab === 'contact') decorateContact(host);
     },
   };
+  AdminChrome.editWork = (w) => workForm(w);
   window.AdminChrome = AdminChrome;
 
   function tagFor(el, editFn, delFn) {

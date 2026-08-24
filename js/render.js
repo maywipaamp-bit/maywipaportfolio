@@ -30,7 +30,7 @@
 
   // image or dashed placeholder
   function media(url, cls, placeholder) {
-    if (url) return `<div class="${cls}"><img src="${esc(asset(url))}" alt=""></div>`;
+    if (url) return `<div class="${cls}"><img src="${esc(asset(url))}" alt="" loading="lazy" decoding="async"></div>`;
     return `<div class="${cls} slot">${esc(placeholder || '')}</div>`;
   }
 
@@ -84,7 +84,7 @@
   function renderContent() {
     const host = document.getElementById('content');
     host.innerHTML = '';
-    if (state.tab === 'works') host.append(state.work === 0 ? worksGrid() : workDetail());
+    if (state.tab === 'works') host.append(worksGrid());
     else if (state.tab === 'services') host.append(servicesView());
     else if (state.tab === 'clients') host.append(clientsView());
     else if (state.tab === 'exp') host.append(expView());
@@ -127,53 +127,76 @@
             <span class="work-desc">${esc(w.description)}</span>
           </div>
         </div>`).firstElementChild;
-      cell.addEventListener('click', () => { state.work = i + 1; renderContent(); });
+      cell.addEventListener('click', () => openWorkScreen(w));
       grid.append(cell);
     });
     wrap.append(grid);
     return wrap;
   }
 
-  function workDetail() {
-    const w = DATA.works[state.work - 1];
-    const wrap = div('detail');
-    const key = 'w' + w.id;
-    if (state.dots[key] == null) state.dots[key] = 0;
-    wrap.append(frag(`
-      <div class="detail-titlebar">
-        <button class="back-chevron" aria-label="กลับไปหน้าผลงาน">‹</button>
-        <span class="detail-title">${esc(w.title)}</span>
-      </div>
-      <div class="pills">${w.tags.map((t) => `<span class="pill">${esc(t)}</span>`).join('')}</div>`));
-    wrap.querySelector('.back-chevron').addEventListener('click', () => { state.work = 0; renderContent(); });
+  // ---------- work detail: หน้าเต็มจอแยก ----------
+  function openWorkScreen(w) {
+    document.querySelectorAll('.work-screen, .ws-backdrop').forEach((n) => n.remove());
+    const imgs = (w.images && w.images.length) ? w.images : [{ url: '' }];
+    const backdrop = div('ws-backdrop');
+    const scr = div('work-screen');
+    scr.innerHTML = `
+      <div class="ws-scroll">
+        <div class="ws-hero">
+          <button class="ws-close" aria-label="ปิด">✕</button>
+          <div class="ws-carousel"></div>
+          <div class="ws-dots"></div>
+        </div>
+        <div class="ws-body">
+          <h2 class="ws-title">${esc(w.title)}</h2>
+          <div class="ws-pills">${w.tags.map((t) => `<span class="pill">${esc(t)}</span>`).join('')}</div>
+          <p class="ws-desc">${esc(w.description)}</p>
+        </div>
+      </div>`;
 
-    const car = div('carousel');
-    const imgs = (w.images && w.images.length) ? w.images : [{ url: '' }, { url: '' }, { url: '' }];
+    const car = scr.querySelector('.ws-carousel');
     imgs.forEach((im, i) => {
-      const slide = frag(`<div class="cslide">${media(im.url, '', 'ภาพที่ ' + (i + 1))}</div>`).firstElementChild;
+      const inner = im.url
+        ? `<img src="${esc(asset(im.url))}" alt="" loading="${i === 0 ? 'eager' : 'lazy'}" decoding="async">`
+        : `<div class="ws-empty">ภาพที่ ${i + 1}</div>`;
+      const slide = frag(`<div class="ws-slide">${inner}</div>`).firstElementChild;
       slide.addEventListener('click', () => openLightbox(imgs, i));
       car.append(slide);
     });
-    wrap.append(car);
 
-    const dots = div('dots');
-    imgs.forEach((_, i) => dots.append(frag(`<span class="dot${state.dots[key] === i ? ' active' : ''}"></span>`)));
-    wrap.append(dots);
-
-    car.addEventListener('scroll', () => {
-      const first = car.firstElementChild;
-      if (!first) return;
-      const wpx = first.offsetWidth + 10;
-      const idx = Math.max(0, Math.min(imgs.length - 1, Math.round(car.scrollLeft / wpx)));
-      if (state.dots[key] !== idx) {
-        state.dots[key] = idx;
+    const dots = scr.querySelector('.ws-dots');
+    if (imgs.length > 1) {
+      imgs.forEach((_, i) => dots.append(frag(`<span class="dot${i === 0 ? ' active' : ''}"></span>`)));
+      car.addEventListener('scroll', () => {
+        const first = car.firstElementChild;
+        if (!first) return;
+        const idx = Math.max(0, Math.min(imgs.length - 1, Math.round(car.scrollLeft / first.offsetWidth)));
         dots.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
-      }
-    });
+      });
+    }
 
-    wrap.append(frag(`<p class="detail-desc">${esc(w.description)}</p>`));
-    if (w.cta_url) wrap.append(frag(`<a class="cta-btn" href="${esc(w.cta_url)}" target="_blank" rel="noopener">${esc(w.cta_label || "ติดต่อสอบถาม")}</a>`).firstElementChild);
-    return wrap;
+    if (ADMIN && window.AdminChrome && window.AdminChrome.editWork) {
+      const eb = frag(`<button class="ws-edit">แก้ไขผลงานนี้</button>`).firstElementChild;
+      eb.addEventListener('click', () => window.AdminChrome.editWork(w));
+      scr.querySelector('.ws-body').append(eb);
+    }
+
+    if (w.cta_url) {
+      const bottom = frag(`<div class="ws-bottom"><a class="ws-cta" href="${esc(w.cta_url)}" target="_blank" rel="noopener">${esc(w.cta_label || 'ติดต่อสอบถาม')}</a></div>`).firstElementChild;
+      scr.append(bottom);
+    }
+
+    const close = () => {
+      scr.remove(); backdrop.remove();
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKey);
+    };
+    const onKey = (e) => { if (e.key === 'Escape') close(); };
+    scr.querySelector('.ws-close').addEventListener('click', close);
+    backdrop.addEventListener('click', close);
+    document.addEventListener('keydown', onKey);
+    document.body.append(backdrop, scr);
+    document.body.style.overflow = 'hidden';
   }
 
   // ---------- services ----------

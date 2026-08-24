@@ -38,6 +38,27 @@ function remove(PDO $p, string $t, int $id): void {
 function ok($x = ['ok' => true]) { echo json_encode($x, JSON_UNESCAPED_UNICODE); exit; }
 function fail($msg, $code = 500) { http_response_code($code); echo json_encode(['error' => $msg], JSON_UNESCAPED_UNICODE); exit; }
 
+// ย่อ + บีบอัดรูปให้เล็กลง (โหลดเร็วขึ้น) ถ้ามี GD
+function optimize_image(string $path, int $maxW = 1400): void {
+    if (!function_exists('imagecreatefromstring')) return;
+    $data = @file_get_contents($path);
+    if ($data === false) return;
+    $img = @imagecreatefromstring($data);
+    if (!$img) return;
+    $w = imagesx($img); $h = imagesy($img);
+    if ($w > $maxW) {
+        $nw = $maxW; $nh = (int) round($h * $maxW / $w);
+        $dst = imagecreatetruecolor($nw, $nh);
+        imagealphablending($dst, false); imagesavealpha($dst, true);
+        imagecopyresampled($dst, $img, 0, 0, 0, 0, $nw, $nh, $w, $h);
+        imagedestroy($img); $img = $dst;
+    }
+    $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+    if ($ext === 'png') imagepng($img, $path, 6);
+    else imagejpeg($img, $path, 82);
+    imagedestroy($img);
+}
+
 try {
     if ($method !== 'GET') admin_guard();   // อ่านสาธารณะได้ แต่แก้ไขต้องล็อกอิน
     $pdo = db(true);
@@ -78,6 +99,7 @@ try {
         $dir = __DIR__ . '/uploads';
         if (!is_dir($dir)) mkdir($dir, 0775, true);
         if (!move_uploaded_file($f['tmp_name'], "$dir/$name")) fail('บันทึกไฟล์ไม่ได้');
+        optimize_image("$dir/$name");
         ok(['url' => "uploads/$name"]);
     }
 
