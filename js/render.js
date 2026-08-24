@@ -1,0 +1,296 @@
+/* Shared portfolio renderer — drives both the public page and the admin page.
+   Set window.ADMIN = true before this runs to enable edit chrome. */
+(function () {
+  const ADMIN = !!window.ADMIN;
+
+  // ---------- inline SVG icon set (stroke #1877f2, width 2) ----------
+  const S = (p, extra = '') =>
+    `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round" ${extra}>${p}</svg>`;
+  const ICONS = {
+    // service icons
+    document: S('<path d="M6 3h9l4 4v14H6z"></path><path d="M9 12h7M9 16h7M9 8h3"></path>'),
+    table: S('<path d="M4 5h16v14H4z"></path><path d="M4 10h16M9 5v14"></path>'),
+    chart: S('<path d="M4 20V10M10 20V4M16 20v-8M21 20H3"></path>'),
+    // project org icon
+    building: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round"><path d="M4 21V5l8-3v19M12 21h8V9l-8-3"></path><path d="M7 9h2M7 13h2M7 17h2"></path></svg>',
+    // contact icons (20px)
+    mail: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg>',
+    phone: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round"><path d="M4 4h5l2 5-3 2a13 13 0 006 6l2-3 5 2v5a2 2 0 01-2 2A17 17 0 012 6a2 2 0 012-2z"></path></svg>',
+    line: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.5 8.5 0 01-8.5 8.5c-1 0-2-.17-2.9-.5L5 21l1-3.6A8.5 8.5 0 1121 11.5z"></path></svg>',
+    instagram: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.2" cy="6.8" r="0.6" fill="#1877f2"></circle></svg>',
+    facebook: '<svg width="20" height="20" viewBox="0 0 24 24" fill="#1877f2"><path d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0022 12z"></path></svg>',
+    tiktok: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round"><path d="M9 12a4 4 0 104 4V4c.5 2.5 2.5 4.5 5 5"></path></svg>',
+  };
+  window.CONTACT_ICONS = ['mail', 'phone', 'line', 'instagram', 'facebook', 'tiktok'];
+  window.SERVICE_ICONS = ['document', 'table', 'chart'];
+
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  // image or dashed placeholder
+  function media(url, cls, placeholder) {
+    if (url) return `<div class="${cls}"><img src="${esc(url)}" alt=""></div>`;
+    return `<div class="${cls} slot">${esc(placeholder || '')}</div>`;
+  }
+
+  const state = { tab: 'works', work: 0, workCat: 'all', expOpen: {}, dots: {} };
+  let DATA = null;
+
+  async function load() {
+    const res = await fetch('api.php?r=portfolio');
+    DATA = await res.json();
+    window.DATA = DATA;
+    renderHeader();
+    renderTabs();
+    renderContent();
+    document.dispatchEvent(new CustomEvent('portfolio:loaded'));
+  }
+  window.reloadPortfolio = load;
+
+  // ---------- header ----------
+  function renderHeader() {
+    const p = DATA.profile || {};
+    const host = document.getElementById('header');
+    const avatar = p.photo
+      ? `<img class="avatar" src="${esc(p.photo)}" alt="${esc(p.name)}">`
+      : `<div class="avatar slot">รูปโปรไฟล์</div>`;
+    host.innerHTML = `
+      ${avatar}
+      <span class="name">${esc(p.name)}</span>
+      <p class="bio">${esc(p.bio)}</p>
+      ${ADMIN ? `<div class="edit-controls"><button class="btn btn-ghost btn-sm" data-edit="profile">แก้ไขโปรไฟล์</button></div>` : ''}`;
+    const foot = document.getElementById('footer');
+    if (foot) foot.textContent = p.footer || '© Maywipa.am · Portfolio';
+  }
+
+  const TABS = [
+    ['works', 'ผลงาน'], ['services', 'บริการ'], ['clients', 'ลูกค้า'],
+    ['exp', 'ประสบการณ์'], ['contact', 'ติดต่อ'],
+  ];
+  function renderTabs() {
+    const host = document.getElementById('tabs');
+    host.innerHTML = TABS.map(([k, label]) =>
+      `<button class="tab${state.tab === k ? ' active' : ''}" data-tab="${k}">${label}</button>`).join('');
+    host.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => {
+      state.tab = b.dataset.tab;
+      if (state.tab === 'works') state.work = 0;
+      renderTabs();
+      renderContent();
+    }));
+  }
+
+  // ---------- content router ----------
+  function renderContent() {
+    const host = document.getElementById('content');
+    host.innerHTML = '';
+    if (state.tab === 'works') host.append(state.work === 0 ? worksGrid() : workDetail());
+    else if (state.tab === 'services') host.append(servicesView());
+    else if (state.tab === 'clients') host.append(clientsView());
+    else if (state.tab === 'exp') host.append(expView());
+    else if (state.tab === 'contact') host.append(contactView());
+    if (ADMIN && window.AdminChrome) window.AdminChrome.decorate(state.tab, state, host);
+  }
+  window.rerenderContent = renderContent;
+  window.portfolioState = state;
+
+  const frag = (html) => { const t = document.createElement('template'); t.innerHTML = html.trim(); return t.content; };
+  const div = (cls) => { const d = document.createElement('div'); if (cls) d.className = cls; return d; };
+
+  // ---------- works ----------
+  function worksGrid() {
+    const wrap = div('view');
+
+    // หัวข้อ + ตัวกรองหมวดหมู่
+    const cats = [...new Set(DATA.works.map((w) => w.category).filter(Boolean))];
+    if (state.workCat !== 'all' && !cats.includes(state.workCat)) state.workCat = 'all';
+    const head = frag(`
+      <div class="section-head">
+        <span class="section-title">ผลงาน</span>
+        <select class="cat-filter" aria-label="ตัวกรองหมวดหมู่"></select>
+      </div>`).firstElementChild;
+    const sel = head.querySelector('.cat-filter');
+    sel.innerHTML = '<option value="all">ทุกหมวดหมู่</option>' +
+      cats.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+    sel.value = state.workCat;
+    sel.addEventListener('change', () => { state.workCat = sel.value; renderContent(); });
+    wrap.append(head);
+
+    const grid = div('works-grid');
+    DATA.works.forEach((w, i) => {
+      if (state.workCat !== 'all' && w.category !== state.workCat) return;
+      const cell = frag(`
+        <div class="work-cell editable" data-work-id="${w.id}">
+          ${media(w.thumb, 'work-thumb', 'ผลงาน ' + (i + 1))}
+          <div class="work-info">
+            <span class="work-cap-title">${esc(w.title)}</span>
+            <span class="work-desc">${esc(w.description)}</span>
+          </div>
+        </div>`).firstElementChild;
+      cell.addEventListener('click', () => { state.work = i + 1; renderContent(); });
+      grid.append(cell);
+    });
+    wrap.append(grid);
+    return wrap;
+  }
+
+  function workDetail() {
+    const w = DATA.works[state.work - 1];
+    const wrap = div('detail');
+    const key = 'w' + w.id;
+    if (state.dots[key] == null) state.dots[key] = 0;
+    wrap.append(frag(`
+      <div class="detail-titlebar">
+        <button class="back-chevron" aria-label="กลับไปหน้าผลงาน">‹</button>
+        <span class="detail-title">${esc(w.title)}</span>
+      </div>
+      <div class="pills">${w.tags.map((t) => `<span class="pill">${esc(t)}</span>`).join('')}</div>`));
+    wrap.querySelector('.back-chevron').addEventListener('click', () => { state.work = 0; renderContent(); });
+
+    const car = div('carousel');
+    const imgs = (w.images && w.images.length) ? w.images : [{ url: '' }, { url: '' }, { url: '' }];
+    imgs.forEach((im, i) => {
+      const slide = frag(`<div class="cslide">${media(im.url, '', 'ภาพที่ ' + (i + 1))}</div>`).firstElementChild;
+      slide.addEventListener('click', () => openLightbox(imgs, i));
+      car.append(slide);
+    });
+    wrap.append(car);
+
+    const dots = div('dots');
+    imgs.forEach((_, i) => dots.append(frag(`<span class="dot${state.dots[key] === i ? ' active' : ''}"></span>`)));
+    wrap.append(dots);
+
+    car.addEventListener('scroll', () => {
+      const first = car.firstElementChild;
+      if (!first) return;
+      const wpx = first.offsetWidth + 10;
+      const idx = Math.max(0, Math.min(imgs.length - 1, Math.round(car.scrollLeft / wpx)));
+      if (state.dots[key] !== idx) {
+        state.dots[key] = idx;
+        dots.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+      }
+    });
+
+    wrap.append(frag(`<p class="detail-desc">${esc(w.description)}</p>`));
+    if (w.cta_url) wrap.append(frag(`<a class="cta-btn" href="${esc(w.cta_url)}" target="_blank" rel="noopener">${esc(w.cta_label || "ติดต่อสอบถาม")}</a>`).firstElementChild);
+    return wrap;
+  }
+
+  // ---------- services ----------
+  function servicesView() {
+    const wrap = div('services');
+    DATA.services.forEach((s) => {
+      wrap.append(frag(`
+        <div class="service-row editable" data-service-id="${s.id}">
+          <div class="icon-tile">${ICONS[s.icon] || ICONS.document}</div>
+          <div class="service-text">
+            <span class="service-title">${esc(s.title)}</span>
+            <span class="service-sub">${esc(s.subtitle)}</span>
+          </div>
+        </div>`));
+    });
+    return wrap;
+  }
+
+  // ---------- clients ----------
+  function clientsView() {
+    const wrap = div('clients-wrap');
+    wrap.append(frag(`<span class="section-label">ลูกค้าที่ไว้วางใจ</span>`));
+    const grid = div('clients-grid');
+    DATA.clients.forEach((c) => {
+      grid.append(frag(`
+        <div class="client-cell editable" data-client-id="${c.id}">
+          ${media(c.logo, 'client-logo', 'โลโก้')}
+          <span class="client-name">${esc(c.name)}</span>
+        </div>`));
+    });
+    wrap.append(grid);
+    return wrap;
+  }
+
+  // ---------- experience ----------
+  function expView() {
+    const wrap = div('timeline');
+    DATA.experiences.forEach((e, idx) => {
+      const last = idx === DATA.experiences.length - 1;
+      const entry = div('exp-entry');
+      entry.dataset.expId = e.id;
+      entry.classList.add('editable');
+      const rail = frag(`<div class="exp-rail"><div class="exp-dot${e.is_edu ? ' edu' : ''}"></div>${last ? '' : '<div class="exp-connector"></div>'}</div>`);
+      entry.append(rail);
+      const body = div('exp-body' + (last ? ' last' : ''));
+      body.append(frag(`<span class="exp-title">${esc(e.title)}</span><span class="exp-period">${esc(e.period)}</span>`));
+      if (e.summary) body.append(frag(`<span class="exp-summary">${esc(e.summary)}</span>`));
+      if (e.projects && e.projects.length) {
+        const open = !!state.expOpen[e.id];
+        const toggle = frag(`<div class="exp-toggle${open ? ' open' : ''}"><span>โปรเจคที่เคยทำ</span><span class="caret">▾</span></div>`).firstElementChild;
+        const list = div('exp-projects');
+        list.hidden = !open;
+        e.projects.forEach((p) => list.append(frag(`
+          <div class="proj-row">
+            <div class="proj-icon">${ICONS.building}</div>
+            <div class="proj-text"><span class="proj-name">${esc(p.name)}</span><span class="proj-meta">${esc(p.meta)}</span></div>
+          </div>`)));
+        toggle.addEventListener('click', () => {
+          state.expOpen[e.id] = !state.expOpen[e.id];
+          list.hidden = !state.expOpen[e.id];
+          toggle.classList.toggle('open', state.expOpen[e.id]);
+        });
+        body.append(toggle, list);
+      }
+      entry.append(body);
+      wrap.append(entry);
+    });
+    return wrap;
+  }
+
+  // ---------- contact ----------
+  function contactView() {
+    const wrap = div('contact-wrap');
+    const groups = [['contact', 'ติดต่อ'], ['social', 'โซเชียล']];
+    groups.forEach(([g, label], gi) => {
+      const rows = DATA.contacts.filter((c) => c.grp === g);
+      if (!rows.length && !ADMIN) return;
+      wrap.append(frag(`<span class="section-label${gi ? ' contact-social-label' : ''}">${label}</span>`));
+      rows.forEach((c) => {
+        const tag = ADMIN ? 'div' : 'a';
+        const row = frag(`
+          <${tag} class="contact-row editable" data-contact-id="${c.id}" ${ADMIN ? '' : `href="${esc(c.href)}"`}>
+            ${ICONS[c.icon] || ICONS.mail}
+            <div class="contact-text"><span class="contact-label">${esc(c.label)}</span><span class="contact-value">${esc(c.value)}</span></div>
+          </${tag}>`).firstElementChild;
+        wrap.append(row);
+      });
+    });
+    return wrap;
+  }
+
+  // ---------- fullscreen image viewer (drag/swipe to change) ----------
+  function openLightbox(images, start) {
+    const ov = div('lightbox');
+    ov.innerHTML = '<button class="lb-close" aria-label="ปิด">✕</button><div class="lb-track"></div>';
+    const track = ov.querySelector('.lb-track');
+    images.forEach((im, i) => {
+      const s = document.createElement('div');
+      s.className = 'lb-slide';
+      s.innerHTML = im.url ? `<img src="${esc(im.url)}" alt="" draggable="false">` : `<div class="lb-empty">ภาพที่ ${i + 1}</div>`;
+      track.append(s);
+    });
+    document.body.append(ov);
+    document.body.style.overflow = 'hidden';
+    requestAnimationFrame(() => { track.scrollLeft = (start || 0) * track.clientWidth; });
+    const close = () => { ov.remove(); document.body.style.overflow = ''; document.removeEventListener('keydown', onKey); };
+    const onKey = (e) => { if (e.key === 'Escape') close(); };
+    ov.querySelector('.lb-close').addEventListener('click', close);
+    ov.addEventListener('click', (e) => { if (e.target === ov || e.target === track) close(); });
+    document.addEventListener('keydown', onKey);
+    // drag with mouse to scroll (touch swipes natively)
+    let down = false, sx = 0, sl = 0, moved = 0;
+    track.addEventListener('pointerdown', (e) => { down = true; moved = 0; sx = e.clientX; sl = track.scrollLeft; track.classList.add('drag'); });
+    track.addEventListener('pointermove', (e) => { if (!down) return; const dx = e.clientX - sx; moved = Math.max(moved, Math.abs(dx)); track.scrollLeft = sl - dx; });
+    const end = () => { down = false; track.classList.remove('drag'); };
+    track.addEventListener('pointerup', end);
+    track.addEventListener('pointercancel', end);
+    track.addEventListener('pointerleave', end);
+  }
+
+  document.addEventListener('DOMContentLoaded', load);
+})();

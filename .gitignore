@@ -1,0 +1,11 @@
+# secrets — ห้ามขึ้น GitHub
+config.php
+
+# uploaded content (เก็บเฉพาะรูปตัวอย่างที่มากับดีไซน์)
+uploads/*
+!uploads/img-am.png
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
