@@ -11,6 +11,7 @@ window.ADMIN = true;
     upload: (file) => { const fd = new FormData(); fd.append('image', file); return fetch(BASE + 'api.php?r=upload', { method: 'POST', body: fd }).then(r => r.json()); },
   };
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const EMOJIS = ['✨','⭐','✅','📊','📈','📄','🧾','💼','📌','📞','💬','🌐','🙏','😊','👍'];
 
   // ---------- toast ----------
   let toastEl;
@@ -43,6 +44,14 @@ window.ADMIN = true;
 
     // wire image pickers
     fields.filter(f => f.type === 'image').forEach(f => wireImage(modal, f.name));
+    modal.querySelectorAll('.emoji-bar').forEach((bar) => {
+      const ta = modal.querySelector(`textarea[data-f="${bar.dataset.emojiFor}"]`);
+      bar.querySelectorAll('button').forEach((btn) => btn.addEventListener('click', () => {
+        const e = btn.textContent; const st = ta.selectionStart, en = ta.selectionEnd;
+        ta.value = ta.value.slice(0, st) + e + ta.value.slice(en);
+        ta.focus(); ta.selectionStart = ta.selectionEnd = st + e.length;
+      }));
+    });
     if (extra) extra($('#extra-slot', modal));
 
     $('[data-act="cancel"]', modal).addEventListener('click', close);
@@ -56,8 +65,10 @@ window.ADMIN = true;
 
   function fieldHtml(f, val) {
     val = val == null ? '' : val;
-    if (f.type === 'textarea')
-      return `<div class="field"><label>${esc(f.label)}</label><textarea data-f="${f.name}">${esc(val)}</textarea>${hint(f)}</div>`;
+    if (f.type === 'textarea') {
+      const bar = f.emoji ? `<div class="emoji-bar" data-emoji-for="${f.name}">${EMOJIS.map(e => `<button type="button">${e}</button>`).join('')}</div>` : '';
+      return `<div class="field"><label>${esc(f.label)}</label>${bar}<textarea data-f="${f.name}">${esc(val)}</textarea>${hint(f)}</div>`;
+    }
     if (f.type === 'select')
       return `<div class="field"><label>${esc(f.label)}</label><select data-f="${f.name}">${f.options.map(o =>
         `<option value="${esc(o.value)}"${String(o.value) === String(val) ? ' selected' : ''}>${esc(o.label)}</option>`).join('')}</select>${hint(f)}</div>`;
@@ -193,11 +204,13 @@ window.ADMIN = true;
     slot.append(add);
   }
   function decorateWorksGrid(host) {
+    const works = DATA.works;
     host.querySelectorAll('.work-cell').forEach((cell) => {
       const id = +cell.dataset.workId;
-      const w = DATA.works.find(x => x.id === id);
+      const w = works.find(x => x.id === id);
       tagFor(cell, () => workForm(w), () => confirmDel(w.title, async () => { await api.del('api.php?r=works&id=' + id); reloadPortfolio(); toast('ลบแล้ว'); }));
       const vb = document.createElement('div'); vb.className = 'view-badge'; vb.textContent = '👁 ' + (w.views || 0); cell.append(vb);
+      addReorder(cell.querySelector('.edit-tag'), 'works', works, works.findIndex(x => x.id === id));
     });
     addButton(host, '+ เพิ่มผลงาน', () => workForm(null));
   }
@@ -267,10 +280,12 @@ window.ADMIN = true;
     });
   }
   function decorateServices(host) {
+    const services = DATA.services;
     host.querySelectorAll('.service-row').forEach((row) => {
       const id = +row.dataset.serviceId;
-      const s = DATA.services.find(x => x.id === id);
+      const s = services.find(x => x.id === id);
       tagFor(row, () => serviceForm(s), () => confirmDel(s.title, async () => { await api.del('api.php?r=services&id=' + id); reloadPortfolio(); }));
+      addReorder(row.querySelector('.edit-tag'), 'services', services, services.findIndex(x => x.id === id));
     });
     addButton(host, '+ เพิ่มบริการ', () => serviceForm(null));
   }
@@ -289,18 +304,24 @@ window.ADMIN = true;
   }
   function decorateClients(host) {
     const clients = DATA.clients;
-    host.querySelectorAll('.client-cell').forEach((cell, idx) => {
+    host.querySelectorAll('.client-cell').forEach((cell) => {
       const id = +cell.dataset.clientId;
       const c = clients.find(x => x.id === id);
       tagFor(cell, () => clientForm(c), () => confirmDel(c.name, async () => { await api.del('api.php?r=clients&id=' + id); reloadPortfolio(); }));
-      const bar = document.createElement('div');
-      bar.className = 'reorder-bar';
-      bar.innerHTML = `<button data-up ${idx === 0 ? 'disabled' : ''}>↑</button><button data-down ${idx === clients.length - 1 ? 'disabled' : ''}>↓</button>`;
-      bar.querySelector('[data-up]').addEventListener('click', (e) => { e.stopPropagation(); moveItem('clients', clients, idx, idx - 1); });
-      bar.querySelector('[data-down]').addEventListener('click', (e) => { e.stopPropagation(); moveItem('clients', clients, idx, idx + 1); });
-      cell.append(bar);
+      addReorder(cell.querySelector('.edit-tag'), 'clients', clients, clients.findIndex(x => x.id === id));
     });
     addButton(host, '+ เพิ่มลูกค้า', () => clientForm(null));
+  }
+  function addReorder(container, resource, arr, idx) {
+    if (!container) return;
+    const mk = (label, disabled, delta) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'ro-btn'; b.textContent = label; if (disabled) b.disabled = true;
+      b.addEventListener('click', (e) => { e.stopPropagation(); e.preventDefault(); moveItem(resource, arr, idx, idx + delta); });
+      return b;
+    };
+    container.insertBefore(mk('↓', idx === arr.length - 1, 1), container.firstChild);
+    container.insertBefore(mk('↑', idx === 0, -1), container.firstChild);
   }
   async function moveItem(resource, arr, from, to) {
     if (to < 0 || to >= arr.length) return;
@@ -383,6 +404,7 @@ window.ADMIN = true;
       ctl.querySelector('[data-e]').addEventListener('click', () => expForm(e));
       ctl.querySelector('[data-d]').addEventListener('click', () => confirmDel(e.title, async () => { await api.del('api.php?r=experiences&id=' + id); reloadPortfolio(); }));
       body.append(ctl);
+      addReorder(ctl, 'experiences', DATA.experiences, DATA.experiences.findIndex(x => x.id === id));
     });
     addButton(host, '+ เพิ่มประสบการณ์', () => expForm(null));
   }
@@ -422,7 +444,7 @@ window.ADMIN = true;
         fields: [
           { name: 'photo', label: 'รูปโปรไฟล์', type: 'image' },
           { name: 'name', label: 'ชื่อ', type: 'text' },
-          { name: 'bio', label: 'คำแนะนำตัว', type: 'textarea' },
+          { name: 'bio', label: 'คำแนะนำตัว', type: 'textarea', emoji: true, hint: 'กด Enter ขึ้นบรรทัดใหม่ได้ · กดอิโมจิด้านบนเพื่อแทรก' },
           { name: 'footer', label: 'ข้อความท้ายหน้า', type: 'text' },
           { name: 'clients_intro', label: 'ข้อความใต้หัวข้อ "ลูกค้าที่ไว้วางใจ"', type: 'textarea', hint: 'อธิบายประเภทงาน/ลูกค้า โทนน่าเชื่อถือ' },
         ],

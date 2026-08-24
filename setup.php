@@ -53,13 +53,13 @@ function migrate(PDO $pdo) {
     $add('profile', 'clients_intro', "VARCHAR(500) NOT NULL DEFAULT '' AFTER footer");
     $add('works', 'views', "INT NOT NULL DEFAULT 0");
     $add('services', 'views', "INT NOT NULL DEFAULT 0");
-    $pdo->prepare("UPDATE profile SET clients_intro=? WHERE id=1 AND clients_intro=''")->execute(['รับงานพัฒนาระบบและจัดทำเอกสารซอฟต์แวร์ให้ทั้งหน่วยงานราชการ บริษัทเอกชน และธุรกิจ SME ด้วยมาตรฐานงานที่ถูกต้อง ครบถ้วน ส่งมอบตรงเวลา ตั้งแต่คู่มือการใช้งานระบบ เอกสารประกอบระบบ ไปจนถึงการวิเคราะห์ข้อมูลและจัดทำรายงาน']);
+    $pdo->prepare("UPDATE profile SET clients_intro=? WHERE id=1 AND clients_intro=''")->execute(['ขอบคุณสำหรับความไว้วางใจในการร่วมงานค่ะ']);
     // จัดลำดับช่องทางติดต่อ: LINE, เบอร์, อีเมล
     $pdo->exec("UPDATE contacts SET sort_order=0 WHERE grp='contact' AND icon='line'");
     $pdo->exec("UPDATE contacts SET sort_order=1 WHERE grp='contact' AND icon='phone'");
     $pdo->exec("UPDATE contacts SET sort_order=2 WHERE grp='contact' AND icon='mail'");
     $pdo->exec("CREATE TABLE IF NOT EXISTS service_images (id INT AUTO_INCREMENT PRIMARY KEY, service_id INT NOT NULL, url VARCHAR(255) NOT NULL DEFAULT '', sort_order INT NOT NULL DEFAULT 0, FOREIGN KEY (service_id) REFERENCES services(id) ON DELETE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
-    $pdo->exec("UPDATE profile SET clients_intro='ขอบคุณสำหรับความไว้วางใจในการร่วมพัฒนา ระบบ เว็บไซต์ และเอกสารซอฟต์แวร์' WHERE id=1 AND (clients_intro='' OR clients_intro LIKE 'รับงานพัฒนาระบบ%')");
+    $pdo->exec("UPDATE profile SET clients_intro='ขอบคุณสำหรับความไว้วางใจในการร่วมงานค่ะ' WHERE id=1 AND (clients_intro='' OR clients_intro LIKE 'รับงานพัฒนา%' OR clients_intro LIKE 'ขอบคุณสำหรับความไว้วางใจในการร่วมพัฒนา%')");
     say("  · อัปเกรดโครงสร้าง/ลำดับเรียบร้อย");
 }
 
@@ -70,7 +70,7 @@ function seed(PDO $pdo) {
             'สวัสดีค่ะ ฉันชื่อเมย์ นักวิเคราะห์ข้อมูลและผู้เชี่ยวชาญด้านเอกสารระบบสารสนเทศ รับทำคู่มือการใช้งานระบบ คีย์ข้อมูล และจัดทำรายงาน ถูกต้อง ตรงเวลา ดูแลงานของคุณทุกขั้นตอนค่ะ',
             'uploads/img-am.png',
             '© 2026 Maywipa.am · Portfolio',
-            'รับงานพัฒนาระบบและจัดทำเอกสารซอฟต์แวร์ให้ทั้งหน่วยงานราชการ บริษัทเอกชน และธุรกิจ SME ด้วยมาตรฐานงานที่ถูกต้อง ครบถ้วน ส่งมอบตรงเวลา ตั้งแต่คู่มือการใช้งานระบบ เอกสารประกอบระบบ ไปจนถึงการวิเคราะห์ข้อมูลและจัดทำรายงาน',
+            'ขอบคุณสำหรับความไว้วางใจในการร่วมงานค่ะ',
         ]);
         say("  · seeded profile");
     }
