@@ -19,6 +19,7 @@
     </div>
     <div class="footer" id="footer">© 2026 Maywipa.am · Portfolio</div>
   </div>
+  <script>window.APP_BASE = '';</script>
   <script src="js/render.js"></script>
 </body>
 </html>

@@ -2,6 +2,8 @@
    Set window.ADMIN = true before this runs to enable edit chrome. */
 (function () {
   const ADMIN = !!window.ADMIN;
+  const BASE = window.APP_BASE || '';
+  const asset = (u) => { if (!u) return u; if (u[0] === '/' || /^(https?:|data:)/i.test(u)) return u; return BASE + u; };
 
   // ---------- inline SVG icon set (stroke #1877f2, width 2) ----------
   const S = (p, extra = '') =>
@@ -28,7 +30,7 @@
 
   // image or dashed placeholder
   function media(url, cls, placeholder) {
-    if (url) return `<div class="${cls}"><img src="${esc(url)}" alt=""></div>`;
+    if (url) return `<div class="${cls}"><img src="${esc(asset(url))}" alt=""></div>`;
     return `<div class="${cls} slot">${esc(placeholder || '')}</div>`;
   }
 
@@ -36,7 +38,7 @@
   let DATA = null;
 
   async function load() {
-    const res = await fetch('api.php?r=portfolio');
+    const res = await fetch(BASE + 'api.php?r=portfolio');
     DATA = await res.json();
     window.DATA = DATA;
     renderHeader();
@@ -51,7 +53,7 @@
     const p = DATA.profile || {};
     const host = document.getElementById('header');
     const avatar = p.photo
-      ? `<img class="avatar" src="${esc(p.photo)}" alt="${esc(p.name)}">`
+      ? `<img class="avatar" src="${esc(asset(p.photo))}" alt="${esc(p.name)}">`
       : `<div class="avatar slot">รูปโปรไฟล์</div>`;
     host.innerHTML = `
       ${avatar}
@@ -271,7 +273,7 @@
     images.forEach((im, i) => {
       const s = document.createElement('div');
       s.className = 'lb-slide';
-      s.innerHTML = im.url ? `<img src="${esc(im.url)}" alt="" draggable="false">` : `<div class="lb-empty">ภาพที่ ${i + 1}</div>`;
+      s.innerHTML = im.url ? `<img src="${esc(asset(im.url))}" alt="" draggable="false">` : `<div class="lb-empty">ภาพที่ ${i + 1}</div>`;
       track.append(s);
     });
     document.body.append(ov);

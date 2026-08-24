@@ -35,11 +35,11 @@ php setup.php
 
 ### 3) เปิดใช้งาน
 - หน้าแสดงผล:  http://maywipa.test/portfolio/
-- หน้าจัดการ:  http://maywipa.test/portfolio/admin.php
+- หน้าจัดการ:  http://maywipa.test/portfolio/adminammy300837/
 
 > หลังสร้างเสร็จ ควรลบไฟล์ `setup.php` ทิ้ง หรือกันไม่ให้เข้าถึงจากภายนอก
 
-## หน้าจัดการหลังบ้าน (admin.php)
+## หน้าจัดการหลังบ้าน (adminammy300837/)
 หน้าตาเหมือนหน้าจริงทุกอย่าง เพิ่มปุ่ม แก้ไข / เพิ่ม / ลบ ทุกส่วน
 (โปรไฟล์, ผลงาน + รูปแกลเลอรี, บริการ, ลูกค้า, ประสบการณ์ + โปรเจค, ช่องทางติดต่อ)
 อัปโหลดรูปได้ (เก็บใน `uploads/`) — บันทึกลง MySQL ทันที ไม่มีระบบ Login
@@ -52,7 +52,7 @@ php setup.php
 | `api.php` | REST API `?r=<resource>&id=<id>` ตาม HTTP method |
 | `setup.php` | สร้าง DB + ตาราง + seed |
 | `schema.sql` | โครงสร้างตาราง |
-| `index.php` / `admin.php` | หน้าแสดงผล / หน้าจัดการ |
+| `index.php` / `adminammy300837/` | หน้าแสดงผล / หน้าจัดการ |
 | `css/` `js/` `uploads/` | สไตล์ / สคริปต์ / รูปภาพ |
 
 ## ขึ้น production ที่ maywipa.com/portfolio

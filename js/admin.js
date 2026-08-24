@@ -3,10 +3,12 @@
 window.ADMIN = true;
 (function () {
   const $ = (s, r = document) => r.querySelector(s);
+  const BASE = window.APP_BASE || '';
+  const asset = (u) => { if (!u) return u; if (u[0] === '/' || /^(https?:|data:)/i.test(u)) return u; return BASE + u; };
   const api = {
-    save: (method, url, body) => fetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(r => r.json()),
-    del: (url) => fetch(url, { method: 'DELETE' }).then(r => r.json()),
-    upload: (file) => { const fd = new FormData(); fd.append('image', file); return fetch('api.php?r=upload', { method: 'POST', body: fd }).then(r => r.json()); },
+    save: (method, url, body) => fetch(BASE + url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }).then(r => r.json()),
+    del: (url) => fetch(BASE + url, { method: 'DELETE' }).then(r => r.json()),
+    upload: (file) => { const fd = new FormData(); fd.append('image', file); return fetch(BASE + 'api.php?r=upload', { method: 'POST', body: fd }).then(r => r.json()); },
   };
   const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -62,7 +64,7 @@ window.ADMIN = true;
     if (f.type === 'image')
       return `<div class="field"><label>${esc(f.label)}</label>
         <div class="img-pick">
-          <img class="preview" data-prev="${f.name}" src="${val ? esc(val) : ''}" alt="" ${val ? '' : 'style="visibility:hidden"'}>
+          <img class="preview" data-prev="${f.name}" src="${val ? esc(asset(val)) : ''}" alt="" ${val ? '' : 'style="visibility:hidden"'}>
           <div style="display:flex;flex-direction:column;gap:6px">
             <input type="file" accept="image/*" data-file="${f.name}">
             <button type="button" class="btn btn-ghost btn-sm" data-clear="${f.name}">ล้างรูป</button>
@@ -82,7 +84,7 @@ window.ADMIN = true;
       toast('กำลังอัปโหลด...');
       const { url, error } = await api.upload(file.files[0]);
       if (error) return toast('อัปโหลดไม่สำเร็จ: ' + error);
-      hidden.value = url; prev.src = url; prev.style.visibility = 'visible';
+      hidden.value = url; prev.src = asset(url); prev.style.visibility = 'visible';
       toast('อัปโหลดรูปแล้ว');
     });
     modal.querySelector(`[data-clear="${name}"]`).addEventListener('click', () => {
@@ -159,7 +161,7 @@ window.ADMIN = true;
     (w.images || []).forEach((im) => {
       const row = document.createElement('div');
       row.className = 'img-pick';
-      row.innerHTML = `<img class="preview" src="${im.url ? esc(im.url) : ''}" ${im.url ? '' : 'style="visibility:hidden"'}>
+      row.innerHTML = `<img class="preview" src="${im.url ? esc(asset(im.url)) : ''}" ${im.url ? '' : 'style="visibility:hidden"'}>
         <div style="display:flex;flex-direction:column;gap:6px">
           <input type="file" accept="image/*">
           <button type="button" class="btn btn-danger btn-sm">ลบรูปนี้</button>
@@ -171,7 +173,7 @@ window.ADMIN = true;
         const { url, error } = await api.upload(fileInput.files[0]);
         if (error) return toast(error);
         await api.save('PUT', 'api.php?r=work_images&id=' + im.id, { url });
-        prev.src = url; prev.style.visibility = 'visible'; im.url = url; toast('อัปเดตรูปแล้ว');
+        prev.src = asset(url); prev.style.visibility = 'visible'; im.url = url; toast('อัปเดตรูปแล้ว');
       });
       row.querySelector('button').addEventListener('click', async () => {
         await api.del('api.php?r=work_images&id=' + im.id);
