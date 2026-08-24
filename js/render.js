@@ -149,7 +149,6 @@
         </div>
         <div class="ws-body">
           <h2 class="ws-title">${esc(w.title)}</h2>
-          <div class="ws-pills">${w.tags.map((t) => `<span class="pill">${esc(t)}</span>`).join('')}</div>
           <p class="ws-desc">${esc(w.description)}</p>
         </div>
       </div>`;
@@ -160,9 +159,15 @@
         ? `<img src="${esc(asset(im.url))}" alt="" loading="${i === 0 ? 'eager' : 'lazy'}" decoding="async">`
         : `<div class="ws-empty">ภาพที่ ${i + 1}</div>`;
       const slide = frag(`<div class="ws-slide">${inner}</div>`).firstElementChild;
-      slide.addEventListener('click', () => openLightbox(imgs, i));
       car.append(slide);
     });
+
+    // ลากเมาส์เพื่อสไลด์ภาพ (มือถือใช้ปัดนิ้วปกติ)
+    let _d = false, _sx = 0, _sl = 0;
+    car.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') return; _d = true; _sx = e.clientX; _sl = car.scrollLeft; car.classList.add('drag'); });
+    car.addEventListener('pointermove', (e) => { if (!_d) return; car.scrollLeft = _sl - (e.clientX - _sx); });
+    const _end = () => { _d = false; car.classList.remove('drag'); };
+    car.addEventListener('pointerup', _end); car.addEventListener('pointercancel', _end); car.addEventListener('pointerleave', _end);
 
     const dots = scr.querySelector('.ws-dots');
     if (imgs.length > 1) {
@@ -193,7 +198,6 @@
     };
     const onKey = (e) => { if (e.key === 'Escape') close(); };
     scr.querySelector('.ws-close').addEventListener('click', close);
-    backdrop.addEventListener('click', close);
     document.addEventListener('keydown', onKey);
     document.body.append(backdrop, scr);
     document.body.style.overflow = 'hidden';

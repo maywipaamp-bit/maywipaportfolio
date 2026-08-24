@@ -241,3 +241,6 @@ body.admin .edit-tag{display:flex}
 .ws-cta{display:flex;align-items:center;justify-content:center;background:var(--primary);color:#fff;border-radius:12px;
   padding:13px 16px;font-size:15px;font-weight:700}
 .ws-cta:hover{background:var(--primary-dark);color:#fff}
+.ws-carousel{cursor:grab}
+.ws-carousel.drag{cursor:grabbing}
+.ws-carousel.drag .ws-slide img{pointer-events:none}
