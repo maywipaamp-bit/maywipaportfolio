@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/style.css?v=<?php echo @filemtime(__DIR__ . '/../css/style.css'); ?>">
 </head>
 <body class="admin">
   <div class="page">
@@ -29,7 +29,7 @@
     <div class="footer" id="footer">© 2026 Maywipa.am · Portfolio</div>
   </div>
   <script>window.APP_BASE = '../';</script>
-  <script src="../js/admin.js"></script>
-  <script src="../js/render.js"></script>
+  <script src="../js/admin.js?v=<?php echo @filemtime(__DIR__ . '/../js/admin.js'); ?>"></script>
+  <script src="../js/render.js?v=<?php echo @filemtime(__DIR__ . '/../js/render.js'); ?>"></script>
 </body>
 </html>
