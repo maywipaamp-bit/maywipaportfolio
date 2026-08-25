@@ -20,7 +20,7 @@
     phone: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round"><path d="M4 4h5l2 5-3 2a13 13 0 006 6l2-3 5 2v5a2 2 0 01-2 2A17 17 0 012 6a2 2 0 012-2z"></path></svg>',
     line: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.5 8.5 0 01-8.5 8.5c-1 0-2-.17-2.9-.5L5 21l1-3.6A8.5 8.5 0 1121 11.5z"></path></svg>',
     instagram: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="5"></rect><circle cx="12" cy="12" r="4"></circle><circle cx="17.2" cy="6.8" r="0.6" fill="#1877f2"></circle></svg>',
-    facebook: '<svg width="20" height="20" viewBox="0 0 24 24" fill="#1877f2"><path d="M22 12a10 10 0 10-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.4h-1.2c-1.2 0-1.6.8-1.6 1.6V12h2.7l-.4 2.9h-2.3v7A10 10 0 0022 12z"></path></svg>',
+    facebook: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>',
     tiktok: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1877f2" stroke-width="2" stroke-linecap="round"><path d="M9 12a4 4 0 104 4V4c.5 2.5 2.5 4.5 5 5"></path></svg>',
   };
   window.CONTACT_ICONS = ['mail', 'phone', 'line', 'instagram', 'facebook', 'tiktok'];
