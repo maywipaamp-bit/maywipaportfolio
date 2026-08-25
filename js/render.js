@@ -152,9 +152,11 @@
     const scr = div('work-screen');
     scr.innerHTML = `
       <div class="ws-scroll">
-        <div class="ws-hero">
+        <div class="ws-topbar">
           <button class="ws-close" aria-label="ปิด">✕</button>
           <button class="ws-share" aria-label="แชร์"><svg viewBox="0 0 24 24" fill="none" stroke="#17233a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"></path></svg></button>
+        </div>
+        <div class="ws-hero">
           <div class="ws-carousel"></div>
           <div class="ws-dots"></div>
         </div>
