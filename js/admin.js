@@ -376,10 +376,13 @@ window.ADMIN = true;
         await api.save('PUT', 'api.php?r=exp_projects&id=' + p.id, { logo: url });
         toast('อัปโหลดโลโก้แล้ว');
       });
-      row.querySelector('[data-save]').addEventListener('click', async () => {
+      const saveProj = async (silent) => {
         await api.save('PUT', 'api.php?r=exp_projects&id=' + p.id, { name: row.querySelector('[data-n]').value, meta: row.querySelector('[data-m]').value });
-        toast('บันทึกโปรเจคแล้ว');
-      });
+        if (!silent) toast('บันทึกโปรเจคแล้ว');
+      };
+      row.querySelector('[data-n]').addEventListener('change', () => saveProj(true));
+      row.querySelector('[data-m]').addEventListener('change', () => saveProj(true));
+      row.querySelector('[data-save]').addEventListener('click', () => saveProj(false));
       row.querySelector('[data-del]').addEventListener('click', async () => { await api.del('api.php?r=exp_projects&id=' + p.id); row.remove(); toast('ลบแล้ว'); });
       list.append(row);
     });

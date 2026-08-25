@@ -118,7 +118,7 @@ img{display:block;max-width:100%}
 .exp-toggle .caret{transition:transform .2s}
 .exp-toggle.open .caret{transform:rotate(180deg)}
 .exp-projects{display:flex;flex-direction:column;gap:8px;margin-top:6px}
-.proj-row{display:flex;align-items:center;gap:10px;background:var(--tile);border-radius:var(--radius-small);padding:10px 12px}
+.proj-row{display:flex;align-items:center;gap:10px;padding:6px 0}
 .proj-icon{width:34px;height:34px;flex:none;border-radius:10px;background:var(--chip);display:flex;align-items:center;justify-content:center}
 .proj-text{display:flex;flex-direction:column;gap:1px}
 .proj-name{font-size:12.5px;font-weight:600}
