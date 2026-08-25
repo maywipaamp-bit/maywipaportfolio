@@ -369,14 +369,16 @@ window.ADMIN = true;
     list.style.cssText = 'display:flex;flex-direction:column;gap:10px';
     (e.projects || []).forEach((p) => {
       const row = document.createElement('div');
-      row.style.cssText = 'display:flex;gap:8px;align-items:center';
+      row.style.cssText = 'display:flex;gap:8px;align-items:flex-start';
       row.innerHTML = `
         <img class="proj-logo-prev" src="${p.logo ? esc(asset(p.logo)) : ''}" style="width:38px;height:38px;border-radius:8px;object-fit:cover;background:var(--tile);border:1px solid var(--border);flex:none${p.logo ? '' : ';visibility:hidden'}">
         <input type="file" accept="image/*" data-logo style="display:none">
         <button type="button" class="btn btn-ghost btn-sm" data-pick style="flex:none">โลโก้</button>
-        <div style="flex:1;min-width:0">
-          <input type="text" data-n value="${esc(p.name)}" placeholder="ชื่อโปรเจค" style="width:100%;margin-bottom:4px;border:1px solid #d5e2f5;border-radius:8px;padding:6px 9px;font-family:inherit">
-          <input type="text" data-m value="${esc(p.meta)}" placeholder="หน่วยงาน · บทบาท" style="width:100%;border:1px solid #d5e2f5;border-radius:8px;padding:6px 9px;font-family:inherit">
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+          <input type="text" data-n value="${esc(p.name)}" placeholder="โปรเจค" style="width:100%;border:1px solid #d5e2f5;border-radius:8px;padding:6px 9px;font-family:inherit;font-size:13px">
+          <input type="text" data-org value="${esc(p.org || '')}" placeholder="หน่วยงาน" style="width:100%;border:1px solid #d5e2f5;border-radius:8px;padding:6px 9px;font-family:inherit;font-size:13px">
+          <input type="text" data-role value="${esc(p.role || '')}" placeholder="บทบาท" style="width:100%;border:1px solid #d5e2f5;border-radius:8px;padding:6px 9px;font-family:inherit;font-size:13px">
+          <input type="text" data-resp value="${esc(p.responsibility || '')}" placeholder="หน้าที่รับผิดชอบ" style="width:100%;border:1px solid #d5e2f5;border-radius:8px;padding:6px 9px;font-family:inherit;font-size:13px">
         </div>
         <button type="button" class="btn btn-ghost btn-sm" data-save style="flex:none">บันทึก</button>
         <button type="button" class="btn btn-danger btn-sm" data-del style="flex:none">ลบ</button>`;
@@ -393,11 +395,10 @@ window.ADMIN = true;
         toast('อัปโหลดโลโก้แล้ว');
       });
       const saveProj = async (silent) => {
-        await api.save('PUT', 'api.php?r=exp_projects&id=' + p.id, { name: row.querySelector('[data-n]').value, meta: row.querySelector('[data-m]').value });
+        await api.save('PUT', 'api.php?r=exp_projects&id=' + p.id, { name: row.querySelector('[data-n]').value, org: row.querySelector('[data-org]').value, role: row.querySelector('[data-role]').value, responsibility: row.querySelector('[data-resp]').value });
         if (!silent) toast('บันทึกโปรเจคแล้ว');
       };
-      row.querySelector('[data-n]').addEventListener('change', () => saveProj(true));
-      row.querySelector('[data-m]').addEventListener('change', () => saveProj(true));
+      row.querySelectorAll('[data-n],[data-org],[data-role],[data-resp]').forEach((el) => el.addEventListener('change', () => saveProj(true)));
       row.querySelector('[data-save]').addEventListener('click', () => saveProj(false));
       row.querySelector('[data-del]').addEventListener('click', async () => { await api.del('api.php?r=exp_projects&id=' + p.id); row.remove(); toast('ลบแล้ว'); });
       list.append(row);

@@ -120,7 +120,7 @@ img{display:block;max-width:100%}
 .exp-projects{display:flex;flex-direction:column;gap:8px;margin-top:6px}
 .proj-row{display:flex;align-items:center;gap:10px;padding:6px 0}
 .proj-icon{width:34px;height:34px;flex:none;border-radius:10px;background:var(--chip);display:flex;align-items:center;justify-content:center}
-.proj-text{display:flex;flex-direction:column;gap:1px}
+.proj-text{display:flex;flex-direction:column;gap:2px}
 .proj-name{font-size:12.5px;font-weight:600}
 .proj-meta{font-size:11.5px;color:var(--muted)}
 
@@ -283,3 +283,4 @@ body.admin .edit-tag{display:flex}
 /* แถวตัวกรองผลงาน: เอาหัวข้อออก เหลือตัวกรองชิดขวา กระชับ */
 .works-head{justify-content:space-between;align-items:center;margin-bottom:8px;margin-top:-2px}
 .works-head .section-title{font-size:12.5px;font-weight:700;color:var(--muted);letter-spacing:.03em}
+.proj-resp{font-size:11.5px;color:var(--muted);line-height:1.4}

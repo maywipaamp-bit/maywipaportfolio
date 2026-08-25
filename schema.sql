@@ -74,6 +74,9 @@ CREATE TABLE IF NOT EXISTS experience_projects (
   name          VARCHAR(160) NOT NULL,
   meta          VARCHAR(200) NOT NULL DEFAULT '', -- "หน่วยงาน · บทบาท"
   logo          VARCHAR(255) NOT NULL DEFAULT '',
+  org           VARCHAR(160) NOT NULL DEFAULT '',
+  role          VARCHAR(160) NOT NULL DEFAULT '',
+  responsibility VARCHAR(500) NOT NULL DEFAULT '',
   sort_order    INT NOT NULL DEFAULT 0,
   FOREIGN KEY (experience_id) REFERENCES experiences(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

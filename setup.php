@@ -50,6 +50,10 @@ function migrate(PDO $pdo) {
     $add('works', 'cta_label', "VARCHAR(80) NOT NULL DEFAULT ''");
     $add('works', 'cta_url', "VARCHAR(255) NOT NULL DEFAULT ''");
     $add('experience_projects', 'logo', "VARCHAR(255) NOT NULL DEFAULT '' AFTER meta");
+    $add('experience_projects', 'org', "VARCHAR(160) NOT NULL DEFAULT ''");
+    $add('experience_projects', 'role', "VARCHAR(160) NOT NULL DEFAULT ''");
+    $add('experience_projects', 'responsibility', "VARCHAR(500) NOT NULL DEFAULT ''");
+    $pdo->exec("UPDATE experience_projects SET org=TRIM(SUBSTRING_INDEX(meta,' · ',1)), role=TRIM(SUBSTRING_INDEX(meta,' · ',-1)) WHERE org='' AND meta LIKE '% · %'");
     $add('profile', 'clients_intro', "VARCHAR(500) NOT NULL DEFAULT '' AFTER footer");
     $add('works', 'views', "INT NOT NULL DEFAULT 0");
     $add('services', 'views', "INT NOT NULL DEFAULT 0");
