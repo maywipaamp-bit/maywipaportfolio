@@ -52,7 +52,8 @@
     renderHeader();
     renderTabs();
     renderContent();
-    const _wid = new URLSearchParams(location.search).get('w');
+    let _wid = new URLSearchParams(location.search).get('w');
+    if (!_wid) { const _p = location.pathname.split('/w/')[1]; if (_p) _wid = parseInt(_p, 10) || ''; }
     if (_wid) { const _w = (DATA.works || []).find((x) => String(x.id) === String(_wid)); if (_w) { state.tab = 'works'; renderTabs(); renderContent(); openWorkScreen(_w); } }
     document.dispatchEvent(new CustomEvent('portfolio:loaded'));
   }
@@ -210,7 +211,7 @@
     const onKey = (e) => { if (e.key === 'Escape') close(); };
     scr.querySelector('.ws-close').addEventListener('click', close);
     scr.querySelector('.ws-share').addEventListener('click', () => {
-      const url = location.origin + location.pathname + '?w=' + w.id;
+      const url = location.origin + '/w/' + w.id;
       const data = { title: w.title, text: w.title + ' · Maywipa.am', url };
       if (navigator.share) navigator.share(data).catch(() => {});
       else if (navigator.clipboard) { navigator.clipboard.writeText(url); toastMsg('คัดลอกลิงก์แล้ว'); }
