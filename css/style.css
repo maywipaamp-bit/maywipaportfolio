@@ -247,9 +247,9 @@ body.admin .edit-tag{display:flex}
 
 /* โลโก้ในโปรเจค (ประสบการณ์) + ลูกค้า: ครอบตัดพอดีกรอบ ไม่ล้น */
 .proj-icon{overflow:hidden}
-.proj-icon img{width:100%;height:100%;object-fit:cover;display:block}
+.proj-icon img{width:100%;height:100%;object-fit:contain;display:block}
 .client-logo{overflow:hidden}
-.client-logo img{width:100%;height:100%;object-fit:cover;display:block}
+.client-logo img{width:100%;height:100%;object-fit:contain;display:block}
 .clients-intro{margin:0;font-size:12.5px;line-height:1.7;color:var(--muted)}
 
 /* บริการที่มีรูป: คลิกดูได้ */

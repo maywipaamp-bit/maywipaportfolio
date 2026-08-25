@@ -45,16 +45,19 @@ function optimize_image(string $path, int $maxW = 1400): void {
     if ($data === false) return;
     $img = @imagecreatefromstring($data);
     if (!$img) return;
+    $isPng = strtolower(pathinfo($path, PATHINFO_EXTENSION)) === 'png';
     $w = imagesx($img); $h = imagesy($img);
     if ($w > $maxW) {
         $nw = $maxW; $nh = (int) round($h * $maxW / $w);
         $dst = imagecreatetruecolor($nw, $nh);
-        imagealphablending($dst, false); imagesavealpha($dst, true);
+        if ($isPng) {
+            imagealphablending($dst, false); imagesavealpha($dst, true);
+            imagefill($dst, 0, 0, imagecolorallocatealpha($dst, 0, 0, 0, 127));
+        }
         imagecopyresampled($dst, $img, 0, 0, 0, 0, $nw, $nh, $w, $h);
         imagedestroy($img); $img = $dst;
     }
-    $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-    if ($ext === 'png') imagepng($img, $path, 6);
+    if ($isPng) { imagealphablending($img, false); imagesavealpha($img, true); imagepng($img, $path, 6); }
     else imagejpeg($img, $path, 82);
     imagedestroy($img);
 }
