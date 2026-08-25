@@ -115,10 +115,11 @@
     if (state.workCat !== 'all' && !cats.includes(state.workCat)) state.workCat = 'all';
     const head = frag(`
       <div class="section-head works-head">
+        <span class="section-title">ผลงาน</span>
         <select class="cat-filter" aria-label="ตัวกรองหมวดหมู่"></select>
       </div>`).firstElementChild;
     const sel = head.querySelector('.cat-filter');
-    sel.innerHTML = '<option value="all">ทุกหมวดหมู่</option>' +
+    sel.innerHTML = '<option value="all">All</option>' +
       cats.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
     sel.value = state.workCat;
     sel.addEventListener('change', () => { state.workCat = sel.value; renderContent(); });
