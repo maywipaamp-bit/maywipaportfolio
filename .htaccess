@@ -6,6 +6,7 @@ CGIPassAuth On
   RewriteEngine On
   RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
   # ลิงก์ผลงานสวยๆ: /w/1 -> index.php
+  RewriteRule ^portfolio/?$ / [R=301,L]
   RewriteRule ^work/([0-9]+)/?$ index.php [L]
 </IfModule>
 SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
