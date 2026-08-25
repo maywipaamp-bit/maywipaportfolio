@@ -1,5 +1,5 @@
 <?php
-// ===== OG/SEO แบบไดนามิก: ถ้าเปิดผลงานเฉพาะชิ้น (?w=ID หรือ /w/ID) ให้โชว์ชื่อ+รูปงานนั้นตอนแชร์ =====
+// ===== OG/SEO แบบไดนามิก: ถ้าเปิดผลงานเฉพาะชิ้น (?w=ID หรือ /work/ID) ให้โชว์ชื่อ+รูปงานนั้นตอนแชร์ =====
 $base = 'https://' . ($_SERVER['HTTP_HOST'] ?? 'maywipa.com');
 $defTitle = 'เมวิภา หาดกระโทก (Maywipa.am) — นักวิเคราะห์ข้อมูล & เอกสารระบบสารสนเทศ';
 $defDesc  = 'พอร์ตโฟลิโอของ นางสาวเมวิภา หาดกระโทก (Maywipa.am · Maywipa Ammy · แอมมี่) นักวิเคราะห์ข้อมูลและผู้เชี่ยวชาญด้านเอกสารระบบสารสนเทศ รับทำคู่มือการใช้งานระบบ คีย์ข้อมูล และจัดทำรายงาน';
@@ -7,11 +7,11 @@ $ogTitle = $defTitle; $ogDesc = $defDesc;
 $ogImage = $base . '/uploads/img-am.png';
 $ogUrl   = $base . '/';
 $reqUri  = $_SERVER['REQUEST_URI'] ?? '';
-$isWorkPath = (bool) preg_match('#/w/\d+#', $reqUri);
+$isWorkPath = (bool) preg_match('#/work/\d+#', $reqUri);
 
 $wid = 0;
 if (isset($_GET['w'])) $wid = (int) $_GET['w'];
-elseif (preg_match('#/w/(\d+)#', $reqUri, $m)) $wid = (int) $m[1];
+elseif (preg_match('#/work/(\d+)#', $reqUri, $m)) $wid = (int) $m[1];
 
 if ($wid > 0) {
     try {
@@ -26,7 +26,7 @@ if ($wid > 0) {
             $st2 = $pdo->prepare("SELECT url FROM work_images WHERE work_id=? AND url<>'' ORDER BY sort_order, id LIMIT 1");
             $st2->execute([$wid]);
             if ($u = $st2->fetchColumn()) $ogImage = $base . '/' . ltrim($u, '/');
-            $ogUrl = $base . '/w/' . $wid;
+            $ogUrl = $base . '/work/' . $wid;
         }
     } catch (Throwable $e) { /* ใช้ค่า default */ }
 }
@@ -83,9 +83,18 @@ $h = fn($s) => htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8');
         <p class="bio">นางสาวเมวิภา หาดกระโทก (แอมมี่) · นักวิเคราะห์ข้อมูลและผู้เชี่ยวชาญด้านเอกสารระบบสารสนเทศ รับทำคู่มือการใช้งานระบบ คีย์ข้อมูล และจัดทำรายงาน</p>
       </div>
       <div class="tabs" id="tabs"></div>
-      <div class="content" id="content"></div>
+      <div class="content" id="content"><div class="loading"><span class="ld-dot"></span><span class="ld-dot"></span><span class="ld-dot"></span></div></div>
     </div>
     <div class="footer" id="footer">© 2026 Maywipa.am · Portfolio</div>
+  </div>
+  <div id="landing" class="landing">
+    <div class="landing-inner">
+      <img class="landing-avatar" src="uploads/img-am.png" alt="Maywipa H.">
+      <div class="landing-name">Maywipa H.</div>
+      <div class="landing-tag">System Analyst &amp; Digital Solutions</div>
+      <p class="landing-desc">รับวิเคราะห์ ออกแบบ และพัฒนาระบบ เว็บไซต์<br>รวมถึงจัดทำเอกสารซอฟต์แวร์และคู่มือการใช้งาน</p>
+      <button class="landing-enter" id="enterPortfolio">ดูผลงาน / เข้าสู่พอร์ตโฟลิโอ →</button>
+    </div>
   </div>
   <script>window.APP_BASE = '';</script>
   <script src="js/render.js?v=<?php echo @filemtime(__DIR__ . '/js/render.js'); ?>"></script>

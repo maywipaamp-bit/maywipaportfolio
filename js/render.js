@@ -46,6 +46,12 @@
   let DATA = null;
 
   async function load() {
+    const _landing = document.getElementById('landing');
+    if (_landing) {
+      const _deep = location.search.indexOf('w=') >= 0 || location.pathname.indexOf('/work/') >= 0;
+      if (_deep) _landing.remove();
+      else { const _eb = document.getElementById('enterPortfolio'); if (_eb) _eb.addEventListener('click', () => { _landing.classList.add('hide'); setTimeout(() => _landing.remove(), 350); }); }
+    }
     const res = await fetch(BASE + 'api.php?r=portfolio');
     DATA = await res.json();
     window.DATA = DATA;
@@ -53,7 +59,7 @@
     renderTabs();
     renderContent();
     let _wid = new URLSearchParams(location.search).get('w');
-    if (!_wid) { const _p = location.pathname.split('/w/')[1]; if (_p) _wid = parseInt(_p, 10) || ''; }
+    if (!_wid) { const _p = location.pathname.split('/work/')[1]; if (_p) _wid = parseInt(_p, 10) || ''; }
     if (_wid) { const _w = (DATA.works || []).find((x) => String(x.id) === String(_wid)); if (_w) { state.tab = 'works'; renderTabs(); renderContent(); openWorkScreen(_w); } }
     document.dispatchEvent(new CustomEvent('portfolio:loaded'));
   }
@@ -211,7 +217,7 @@
     const onKey = (e) => { if (e.key === 'Escape') close(); };
     scr.querySelector('.ws-close').addEventListener('click', close);
     scr.querySelector('.ws-share').addEventListener('click', () => {
-      const url = location.origin + '/w/' + w.id;
+      const url = location.origin + '/work/' + w.id;
       const data = { title: w.title, text: w.title + ' · Maywipa.am', url };
       if (navigator.share) navigator.share(data).catch(() => {});
       else if (navigator.clipboard) { navigator.clipboard.writeText(url); toastMsg('คัดลอกลิงก์แล้ว'); }
