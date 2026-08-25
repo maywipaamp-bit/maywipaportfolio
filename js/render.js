@@ -131,10 +131,6 @@
       const cell = frag(`
         <div class="work-cell editable" data-work-id="${w.id}">
           ${media(w.thumb, 'work-thumb', 'ผลงาน ' + (i + 1))}
-          <div class="work-info">
-            <span class="work-cap-title">${esc(w.title)}</span>
-            <span class="work-desc">${esc((w.description || '').split('**').join(''))}</span>
-          </div>
         </div>`).firstElementChild;
       cell.addEventListener('click', () => openWorkScreen(w));
       grid.append(cell);
