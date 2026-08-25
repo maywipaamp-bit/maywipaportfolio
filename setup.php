@@ -53,6 +53,7 @@ function migrate(PDO $pdo) {
     $add('experience_projects', 'org', "VARCHAR(160) NOT NULL DEFAULT ''");
     $add('experience_projects', 'role', "VARCHAR(160) NOT NULL DEFAULT ''");
     $add('experience_projects', 'responsibility', "VARCHAR(500) NOT NULL DEFAULT ''");
+    $add('experience_projects', 'year', "VARCHAR(40) NOT NULL DEFAULT '' AFTER logo");
     $pdo->exec("UPDATE experience_projects SET org=TRIM(SUBSTRING_INDEX(meta,' · ',1)), role=TRIM(SUBSTRING_INDEX(meta,' · ',-1)) WHERE org='' AND meta LIKE '% · %'");
     $add('profile', 'clients_intro', "VARCHAR(500) NOT NULL DEFAULT '' AFTER footer");
     $add('works', 'views', "INT NOT NULL DEFAULT 0");

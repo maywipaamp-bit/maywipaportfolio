@@ -74,6 +74,7 @@ CREATE TABLE IF NOT EXISTS experience_projects (
   name          VARCHAR(160) NOT NULL,
   meta          VARCHAR(200) NOT NULL DEFAULT '', -- "หน่วยงาน · บทบาท"
   logo          VARCHAR(255) NOT NULL DEFAULT '',
+  year          VARCHAR(40) NOT NULL DEFAULT '',
   org           VARCHAR(160) NOT NULL DEFAULT '',
   role          VARCHAR(160) NOT NULL DEFAULT '',
   responsibility VARCHAR(500) NOT NULL DEFAULT '',

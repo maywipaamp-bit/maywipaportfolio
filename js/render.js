@@ -268,10 +268,15 @@
         list.hidden = !open;
         e.projects.forEach((p) => list.append(frag(`
           <div class="proj-row">
-            <div class="proj-icon">${p.logo ? `<img src="${esc(asset(p.logo))}" alt="" loading="lazy">` : ICONS.building}</div>
+            <div class="proj-left">
+              <div class="proj-icon">${p.logo ? `<img src="${esc(asset(p.logo))}" alt="" loading="lazy">` : ICONS.building}</div>
+              ${p.year ? `<span class="proj-year">${esc(p.year)}</span>` : ''}
+            </div>
             <div class="proj-text">
               <span class="proj-name">${esc(p.name)}</span>
-              ${(p.org || p.role) ? `<span class="proj-meta">${esc([p.org, p.role].filter(Boolean).join(' · '))}</span>` : (p.meta ? `<span class="proj-meta">${esc(p.meta)}</span>` : '')}
+              ${p.org ? `<span class="proj-meta">${esc(p.org)}</span>` : ''}
+              ${p.role ? `<span class="proj-meta">${esc(p.role)}</span>` : ''}
+              ${(!p.org && !p.role && p.meta) ? `<span class="proj-meta">${esc(p.meta)}</span>` : ''}
               ${p.responsibility ? `<span class="proj-resp">${esc(p.responsibility)}</span>` : ''}
             </div>
           </div>`)));

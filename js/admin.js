@@ -375,6 +375,7 @@ window.ADMIN = true;
         <input type="file" accept="image/*" data-logo style="display:none">
         <button type="button" class="btn btn-ghost btn-sm" data-pick style="flex:none">โลโก้</button>
         <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+          <input type="text" data-year value="${esc(p.year || '')}" placeholder="ปีงบ (เช่น 2567)" style="width:100%;border:1px solid #d5e2f5;border-radius:8px;padding:6px 9px;font-family:inherit;font-size:13px">
           <input type="text" data-n value="${esc(p.name)}" placeholder="โปรเจค" style="width:100%;border:1px solid #d5e2f5;border-radius:8px;padding:6px 9px;font-family:inherit;font-size:13px">
           <input type="text" data-org value="${esc(p.org || '')}" placeholder="หน่วยงาน" style="width:100%;border:1px solid #d5e2f5;border-radius:8px;padding:6px 9px;font-family:inherit;font-size:13px">
           <input type="text" data-role value="${esc(p.role || '')}" placeholder="บทบาท" style="width:100%;border:1px solid #d5e2f5;border-radius:8px;padding:6px 9px;font-family:inherit;font-size:13px">
@@ -395,10 +396,10 @@ window.ADMIN = true;
         toast('อัปโหลดโลโก้แล้ว');
       });
       const saveProj = async (silent) => {
-        await api.save('PUT', 'api.php?r=exp_projects&id=' + p.id, { name: row.querySelector('[data-n]').value, org: row.querySelector('[data-org]').value, role: row.querySelector('[data-role]').value, responsibility: row.querySelector('[data-resp]').value });
+        await api.save('PUT', 'api.php?r=exp_projects&id=' + p.id, { name: row.querySelector('[data-n]').value, year: row.querySelector('[data-year]').value, org: row.querySelector('[data-org]').value, role: row.querySelector('[data-role]').value, responsibility: row.querySelector('[data-resp]').value });
         if (!silent) toast('บันทึกโปรเจคแล้ว');
       };
-      row.querySelectorAll('[data-n],[data-org],[data-role],[data-resp]').forEach((el) => el.addEventListener('change', () => saveProj(true)));
+      row.querySelectorAll('[data-n],[data-year],[data-org],[data-role],[data-resp]').forEach((el) => el.addEventListener('change', () => saveProj(true)));
       row.querySelector('[data-save]').addEventListener('click', () => saveProj(false));
       row.querySelector('[data-del]').addEventListener('click', async () => { await api.del('api.php?r=exp_projects&id=' + p.id); row.remove(); toast('ลบแล้ว'); });
       list.append(row);
