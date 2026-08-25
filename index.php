@@ -93,7 +93,7 @@ $h = fn($s) => htmlspecialchars((string) $s, ENT_QUOTES, 'UTF-8');
       <div class="landing-name">Maywipa H.</div>
       <div class="landing-tag">System Analyst &amp; Digital Solutions</div>
       <p class="landing-desc">รับวิเคราะห์ ออกแบบ และพัฒนาระบบ เว็บไซต์<br>รวมถึงจัดทำเอกสารซอฟต์แวร์และคู่มือการใช้งาน</p>
-      <button class="landing-enter" id="enterPortfolio">ดูผลงาน / เข้าสู่พอร์ตโฟลิโอ →</button>
+      <div class="landing-loading"><span class="ld-dot"></span><span class="ld-dot"></span><span class="ld-dot"></span></div>
     </div>
   </div>
   <script>window.APP_BASE = '';</script>

@@ -221,9 +221,9 @@ body.admin .edit-tag{display:flex}
 .ws-hero{position:relative;background:#fff}
 .ws-carousel{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
 .ws-carousel::-webkit-scrollbar{display:none}
-.ws-slide{flex:none;width:100%;height:300px;scroll-snap-align:center;cursor:pointer;background:#fff}
-.ws-slide img{width:100%;height:100%;object-fit:contain;object-position:top center;display:block}
-.ws-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#9db2d6;font-size:13px;background:var(--tile)}
+.ws-slide{flex:none;width:100%;scroll-snap-align:center;cursor:pointer;background:#fff;display:flex;align-items:flex-start}
+.ws-slide img{width:100%;height:auto;display:block}
+.ws-empty{width:100%;height:280px;display:flex;align-items:center;justify-content:center;color:#9db2d6;font-size:13px;background:var(--tile)}
 .ws-close{position:absolute;top:12px;left:12px;z-index:2;width:30px;height:30px;border:none;border-radius:50%;
   background:rgba(255,255,255,.9);color:#17233a;font-size:11px;cursor:pointer;display:flex;align-items:center;
   justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.18)}
@@ -293,9 +293,9 @@ body.admin .edit-tag{display:flex}
 .proj-line .proj-v{flex:1;min-width:0}
 
 /* ลูกค้า: โลโก้แบบ free (ไม่วงกลม รองรับแนวนอน) สูงเท่ากัน กว้างตามจริง */
-.clients-grid{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:10px 14px}
+.clients-grid{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-start;gap:14px 20px}
 .client-cell{display:flex;align-items:center;justify-content:center;padding:2px}
-.client-logo{width:auto;height:34px;border-radius:0;overflow:visible;background:transparent;display:flex;align-items:center;justify-content:center}
+.client-logo{width:auto;height:40px;border-radius:0;overflow:visible;background:transparent;display:flex;align-items:center;justify-content:center}
 .client-logo img{height:100%;width:auto;max-width:150px;object-fit:contain;display:block}
 .client-logo.slot{width:60px;height:46px;border-radius:10px}
 
