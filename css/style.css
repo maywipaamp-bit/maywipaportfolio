@@ -329,3 +329,9 @@ body.admin .edit-tag{display:flex}
 .ws-topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:#fff}
 .ws-topbar .ws-close,.ws-topbar .ws-share{position:static;top:auto;left:auto;right:auto;background:transparent;box-shadow:none;width:34px;height:34px;color:#17233a}
 .ws-topbar .ws-close:hover,.ws-topbar .ws-share:hover{background:#f0f4fa}
+
+/* ลูกค้า: แถวละ 4 + เว้นบรรทัดมากขึ้น */
+.clients-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px 10px;align-items:center;justify-items:center;justify-content:stretch}
+.client-cell{display:flex;align-items:center;justify-content:center;width:100%;height:44px;padding:0}
+.client-logo{height:auto;max-height:40px;max-width:100%}
+.client-logo img{max-width:100%;max-height:40px;width:auto;height:auto;object-fit:contain}
