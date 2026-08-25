@@ -114,8 +114,7 @@
     const cats = [...new Set(DATA.works.map((w) => w.category).filter(Boolean))];
     if (state.workCat !== 'all' && !cats.includes(state.workCat)) state.workCat = 'all';
     const head = frag(`
-      <div class="section-head">
-        <span class="section-title">ผลงาน</span>
+      <div class="section-head works-head">
         <select class="cat-filter" aria-label="ตัวกรองหมวดหมู่"></select>
       </div>`).firstElementChild;
     const sel = head.querySelector('.cat-filter');

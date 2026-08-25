@@ -280,3 +280,5 @@ body.admin .edit-tag{display:flex}
 .fmt-bar button:hover{background:var(--chip);color:var(--primary)}
 /* ลิงก์ในคำอธิบายผลงาน */
 .ws-desc a{color:var(--primary);text-decoration:underline}
+/* แถวตัวกรองผลงาน: เอาหัวข้อออก เหลือตัวกรองชิดขวา กระชับ */
+.works-head{justify-content:flex-end;margin-bottom:8px;margin-top:-4px}
