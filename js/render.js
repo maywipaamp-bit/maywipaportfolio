@@ -158,8 +158,8 @@
         </div>
         <div class="ws-hero">
           <div class="ws-carousel"></div>
-          <div class="ws-dots"></div>
         </div>
+        <div class="ws-dots"></div>
         <div class="ws-body">
           <h2 class="ws-title">${esc(w.title)}</h2>
           <p class="ws-desc">${formatText(w.description)}</p>
