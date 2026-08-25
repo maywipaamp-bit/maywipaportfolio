@@ -286,3 +286,8 @@ body.admin .edit-tag{display:flex}
 .proj-resp{font-size:11.5px;color:var(--muted);line-height:1.4}
 .proj-left{display:flex;flex-direction:column;align-items:center;gap:3px;flex:none}
 .proj-year{font-size:10.5px;color:var(--muted);text-align:center;line-height:1.1;max-width:44px}
+/* บรรทัดข้อมูลโปรเจค: ป้าย + ค่า (ย่อบรรทัดถัดไปให้ตรงค่า) */
+.proj-line{display:flex;gap:5px;font-size:11.5px;color:var(--muted);line-height:1.4}
+.proj-line .proj-k{flex:none;width:46px;font-weight:600}
+.proj-line .proj-c{flex:none}
+.proj-line .proj-v{flex:1;min-width:0}

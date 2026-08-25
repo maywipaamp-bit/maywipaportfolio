@@ -274,10 +274,10 @@
             </div>
             <div class="proj-text">
               <span class="proj-name">${esc(p.name)}</span>
-              ${p.org ? `<span class="proj-meta">${esc(p.org)}</span>` : ''}
-              ${p.role ? `<span class="proj-meta">${esc(p.role)}</span>` : ''}
+              ${p.org ? `<div class="proj-line"><span class="proj-k">หน่วยงาน</span><span class="proj-c">:</span><span class="proj-v">${esc(p.org)}</span></div>` : ''}
+              ${p.role ? `<div class="proj-line"><span class="proj-k">บทบาท</span><span class="proj-c">:</span><span class="proj-v">${esc(p.role)}</span></div>` : ''}
               ${(!p.org && !p.role && p.meta) ? `<span class="proj-meta">${esc(p.meta)}</span>` : ''}
-              ${p.responsibility ? `<span class="proj-resp">${esc(p.responsibility)}</span>` : ''}
+              ${p.responsibility ? `<div class="proj-line"><span class="proj-k">หน้าที่</span><span class="proj-c">:</span><span class="proj-v">${esc(p.responsibility)}</span></div>` : ''}
             </div>
           </div>`)));
         toggle.addEventListener('click', () => {
