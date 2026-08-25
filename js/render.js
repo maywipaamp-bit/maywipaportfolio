@@ -52,6 +52,8 @@
     renderHeader();
     renderTabs();
     renderContent();
+    const _wid = new URLSearchParams(location.search).get('w');
+    if (_wid) { const _w = (DATA.works || []).find((x) => String(x.id) === String(_wid)); if (_w) { state.tab = 'works'; renderTabs(); renderContent(); openWorkScreen(_w); } }
     document.dispatchEvent(new CustomEvent('portfolio:loaded'));
   }
   window.reloadPortfolio = load;
@@ -151,6 +153,7 @@
       <div class="ws-scroll">
         <div class="ws-hero">
           <button class="ws-close" aria-label="ปิด">✕</button>
+          <button class="ws-share" aria-label="แชร์"><svg viewBox="0 0 24 24" fill="none" stroke="#17233a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"></path></svg></button>
           <div class="ws-carousel"></div>
           <div class="ws-dots"></div>
         </div>
@@ -206,6 +209,13 @@
     };
     const onKey = (e) => { if (e.key === 'Escape') close(); };
     scr.querySelector('.ws-close').addEventListener('click', close);
+    scr.querySelector('.ws-share').addEventListener('click', () => {
+      const url = location.origin + location.pathname + '?w=' + w.id;
+      const data = { title: w.title, text: w.title + ' · Maywipa.am', url };
+      if (navigator.share) navigator.share(data).catch(() => {});
+      else if (navigator.clipboard) { navigator.clipboard.writeText(url); toastMsg('คัดลอกลิงก์แล้ว'); }
+      else prompt('คัดลอกลิงก์นี้', url);
+    });
     document.addEventListener('keydown', onKey);
     document.body.append(backdrop, scr);
     document.body.style.overflow = 'hidden';
@@ -322,6 +332,7 @@
       s.innerHTML = im.url ? `<img src="${esc(asset(im.url))}" alt="" draggable="false">` : `<div class="lb-empty">ภาพที่ ${i + 1}</div>`;
       track.append(s);
     });
+    track.querySelectorAll('.lb-slide img').forEach((im) => attachZoom(im));
     document.body.append(ov);
     document.body.style.overflow = 'hidden';
     requestAnimationFrame(() => { track.scrollLeft = (start || 0) * track.clientWidth; });
@@ -338,6 +349,30 @@
     track.addEventListener('pointerup', end);
     track.addEventListener('pointercancel', end);
     track.addEventListener('pointerleave', end);
+  }
+
+  function toastMsg(m) {
+    let t = document.querySelector('.mini-toast');
+    if (!t) { t = document.createElement('div'); t.className = 'mini-toast'; document.body.append(t); }
+    t.textContent = m; t.classList.add('show');
+    clearTimeout(toastMsg._t); toastMsg._t = setTimeout(() => t.classList.remove('show'), 1600);
+  }
+
+  function attachZoom(img) {
+    let scale = 1, tx = 0, ty = 0, drag = false, sx = 0, sy = 0, lastTap = 0;
+    const apply = () => { img.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`; img.style.touchAction = scale > 1 ? 'none' : 'manipulation'; };
+    img.addEventListener('click', (e) => {
+      const now = Date.now();
+      if (now - lastTap < 300) { e.stopPropagation();
+        if (scale > 1) { scale = 1; tx = 0; ty = 0; } else { scale = 2.4; }
+        apply();
+      }
+      lastTap = now;
+    });
+    img.addEventListener('pointerdown', (e) => { if (scale <= 1) return; e.stopPropagation(); drag = true; sx = e.clientX - tx; sy = e.clientY - ty; });
+    img.addEventListener('pointermove', (e) => { if (!drag) return; e.stopPropagation(); tx = e.clientX - sx; ty = e.clientY - sy; apply(); });
+    const end = () => { drag = false; };
+    img.addEventListener('pointerup', end); img.addEventListener('pointercancel', end);
   }
 
   document.addEventListener('DOMContentLoaded', load);

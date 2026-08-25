@@ -204,7 +204,7 @@ body.admin .edit-tag{display:flex}
 .lb-track::-webkit-scrollbar{display:none}
 .lb-track.drag{cursor:grabbing}
 .lb-slide{flex:none;width:100%;height:100%;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;padding:24px}
-.lb-slide img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;user-select:none;-webkit-user-drag:none}
+.lb-slide img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;user-select:none;-webkit-user-drag:none;touch-action:manipulation;transition:transform .15s;transform-origin:center center}
 .lb-empty{color:#9db2d6;font-size:14px}
 .lb-close{position:fixed;top:14px;right:16px;z-index:2;appearance:none;border:none;background:rgba(255,255,255,.16);color:#fff;width:38px;height:38px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 .lb-close:hover{background:rgba(255,255,255,.3)}
@@ -222,7 +222,7 @@ body.admin .edit-tag{display:flex}
 .ws-carousel{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
 .ws-carousel::-webkit-scrollbar{display:none}
 .ws-slide{flex:none;width:100%;height:300px;scroll-snap-align:center;cursor:pointer;background:#eef5ff}
-.ws-slide img{width:100%;height:100%;object-fit:cover;display:block}
+.ws-slide img{width:100%;height:100%;object-fit:contain;display:block}
 .ws-empty{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#9db2d6;font-size:13px;background:var(--tile)}
 .ws-close{position:absolute;top:14px;left:14px;z-index:2;width:36px;height:36px;border:none;border-radius:50%;
   background:rgba(255,255,255,.92);color:#17233a;font-size:14px;cursor:pointer;display:flex;align-items:center;
@@ -298,3 +298,13 @@ body.admin .edit-tag{display:flex}
 .client-logo{width:auto;height:46px;border-radius:0;overflow:visible;background:transparent;display:flex;align-items:center;justify-content:center}
 .client-logo img{height:100%;width:auto;max-width:150px;object-fit:contain;display:block}
 .client-logo.slot{width:60px;height:46px;border-radius:10px}
+
+/* ปุ่มแชร์ (มุมขวาบนของรูปในรายละเอียด) */
+.ws-share{position:absolute;top:14px;right:14px;z-index:2;width:36px;height:36px;border:none;border-radius:50%;
+  background:rgba(255,255,255,.92);color:#17233a;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.ws-share:hover{background:#fff}
+.ws-share svg{width:18px;height:18px}
+.lb-slide.zoomed{overflow:auto}
+.mini-toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:#17233a;color:#fff;padding:9px 16px;border-radius:999px;font-size:13px;z-index:120;opacity:0;transition:opacity .2s;pointer-events:none}
+.mini-toast.show{opacity:1}
