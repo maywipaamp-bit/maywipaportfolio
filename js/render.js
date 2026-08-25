@@ -46,9 +46,6 @@
   let DATA = null;
 
   async function load() {
-    const _landing = document.getElementById('landing');
-    const _deep = !!(location.search.indexOf('w=') >= 0 || location.pathname.indexOf('/work/') >= 0);
-    if (_landing && _deep) _landing.remove();
     const res = await fetch(BASE + 'api.php?r=portfolio');
     DATA = await res.json();
     window.DATA = DATA;
@@ -58,7 +55,6 @@
     let _wid = new URLSearchParams(location.search).get('w');
     if (!_wid) { const _p = location.pathname.split('/work/')[1]; if (_p) _wid = parseInt(_p, 10) || ''; }
     if (_wid) { const _w = (DATA.works || []).find((x) => String(x.id) === String(_wid)); if (_w) { state.tab = 'works'; renderTabs(); renderContent(); openWorkScreen(_w); } }
-    if (_landing && !_deep) setTimeout(() => { _landing.classList.add('hide'); setTimeout(() => _landing.remove(), 400); }, 1300);
     document.dispatchEvent(new CustomEvent('portfolio:loaded'));
   }
   window.reloadPortfolio = load;
