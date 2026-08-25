@@ -222,8 +222,8 @@
           <div class="service-text">
             <span class="service-title">${esc(s.title)}</span>
             <span class="service-sub">${esc(s.subtitle)}</span>
+            ${imgs.length ? '<span class="service-view">ดูตัวอย่างผลงาน ›</span>' : ''}
           </div>
-          ${imgs.length ? '<span class="service-view">ดูภาพ ›</span>' : ''}
         </div>`).firstElementChild;
       if (imgs.length) row.addEventListener('click', () => { pingView('service', s.id); openLightbox(imgs, 0); });
       wrap.append(row);
@@ -234,9 +234,6 @@
   // ---------- clients ----------
   function clientsView() {
     const wrap = div('clients-wrap');
-    wrap.append(frag(`<span class="section-label">ลูกค้าที่เคยร่วมงานกับเรา</span>`));
-    const intro = (DATA.profile && DATA.profile.clients_intro) || '';
-    if (intro) wrap.append(frag(`<p class="clients-intro">${esc(intro)}</p>`));
     const grid = div('clients-grid');
     DATA.clients.forEach((c) => {
       grid.append(frag(`

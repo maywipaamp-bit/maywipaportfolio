@@ -87,10 +87,10 @@ img{display:block;max-width:100%}
 
 /* services */
 .services{display:flex;flex-direction:column;gap:10px}
-.service-row{display:flex;gap:12px;align-items:center;background:var(--tile);border-radius:var(--radius-tile);padding:14px}
+.service-row{display:flex;gap:12px;align-items:flex-start;background:var(--tile);border-radius:var(--radius-tile);padding:14px 15px}
 .icon-tile{width:44px;height:44px;flex:none;border-radius:12px;background:var(--chip);display:flex;align-items:center;justify-content:center}
-.service-text{display:flex;flex-direction:column;gap:2px;min-width:0}
-.service-title{font-size:13.5px;font-weight:600}
+.service-text{display:flex;flex-direction:column;gap:3px;min-width:0}
+.service-title{font-size:14px;font-weight:600;line-height:1.35}
 .service-sub{font-size:12px;color:var(--muted)}
 
 /* clients */
@@ -254,7 +254,7 @@ body.admin .edit-tag{display:flex}
 
 /* บริการที่มีรูป: คลิกดูได้ */
 .service-row.has-images{cursor:pointer}
-.service-view{margin-left:auto;flex:none;align-self:center;font-size:12px;font-weight:700;color:var(--primary);white-space:nowrap}
+.service-view{align-self:flex-start;margin-top:5px;font-size:12px;font-weight:700;color:var(--primary)}
 .service-row.has-images:hover{background:var(--chip)}
 /* ป้ายจำนวนวิว (เฉพาะหน้า admin) */
 .view-badge{position:absolute;top:6px;left:6px;z-index:2;background:rgba(23,35,58,.72);color:#fff;font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;pointer-events:none}
@@ -291,3 +291,10 @@ body.admin .edit-tag{display:flex}
 .proj-line .proj-k{flex:none;width:46px;font-weight:600}
 .proj-line .proj-c{flex:none}
 .proj-line .proj-v{flex:1;min-width:0}
+
+/* ลูกค้า: โลโก้แบบ free (ไม่วงกลม รองรับแนวนอน) สูงเท่ากัน กว้างตามจริง */
+.clients-grid{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:16px 22px}
+.client-cell{display:flex;align-items:center;justify-content:center;padding:2px}
+.client-logo{width:auto;height:46px;border-radius:0;overflow:visible;background:transparent;display:flex;align-items:center;justify-content:center}
+.client-logo img{height:100%;width:auto;max-width:150px;object-fit:contain;display:block}
+.client-logo.slot{width:60px;height:46px;border-radius:10px}
