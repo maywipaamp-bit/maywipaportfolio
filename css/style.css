@@ -234,7 +234,7 @@ body.admin .edit-tag{display:flex}
 .ws-body{padding:18px 18px 26px;display:flex;flex-direction:column;gap:10px}
 .ws-title{margin:0;font-size:20px;font-weight:700;line-height:1.35}
 .ws-pills{display:flex;gap:6px;flex-wrap:wrap}
-.ws-desc{margin:0;font-size:14px;line-height:1.75;color:var(--body)}
+.ws-desc{margin:0;font-size:14px;line-height:1.75;color:var(--body);white-space:pre-line}
 .ws-edit{margin-top:6px;align-self:flex-start;appearance:none;border:1px solid var(--border);background:var(--chip);
   color:var(--primary-dark);border-radius:10px;padding:7px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
 .ws-bottom{border-top:1px solid var(--border);padding:12px 16px;background:#fff}
@@ -273,3 +273,10 @@ body.admin .edit-tag{display:flex}
 .emoji-bar{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
 .emoji-bar button{border:1px solid var(--border);background:#fbfdff;border-radius:8px;cursor:pointer;font-size:16px;line-height:1;padding:3px 6px}
 .emoji-bar button:hover{background:var(--chip)}
+
+/* แถบจัดรูปแบบข้อความ (ตัวหนา/ลิงก์) ในฟอร์ม */
+.fmt-bar{display:flex;gap:6px;margin-bottom:6px}
+.fmt-bar button{border:1px solid var(--border);background:#fbfdff;border-radius:8px;cursor:pointer;font-size:12px;padding:4px 9px;font-family:inherit;color:var(--body)}
+.fmt-bar button:hover{background:var(--chip);color:var(--primary)}
+/* ลิงก์ในคำอธิบายผลงาน */
+.ws-desc a{color:var(--primary);text-decoration:underline}

@@ -52,6 +52,21 @@ window.ADMIN = true;
         ta.focus(); ta.selectionStart = ta.selectionEnd = st + e.length;
       }));
     });
+    modal.querySelectorAll('.fmt-bar').forEach((bar) => {
+      const ta = modal.querySelector(`textarea[data-f="${bar.dataset.fmtFor}"]`);
+      bar.querySelector('[data-b]').addEventListener('click', () => {
+        const st = ta.selectionStart, en = ta.selectionEnd, sel = ta.value.slice(st, en);
+        ta.value = ta.value.slice(0, st) + '**' + sel + '**' + ta.value.slice(en);
+        ta.focus(); ta.selectionStart = st + 2; ta.selectionEnd = st + 2 + sel.length;
+      });
+      bar.querySelector('[data-link]').addEventListener('click', () => {
+        const url = prompt('ใส่ลิงก์ (ขึ้นต้นด้วย https://)', 'https://');
+        if (!url) return;
+        const st = ta.selectionStart, en = ta.selectionEnd, sel = ta.value.slice(st, en) || 'ลิงก์';
+        ta.value = ta.value.slice(0, st) + '[' + sel + '](' + url + ')' + ta.value.slice(en);
+        ta.focus();
+      });
+    });
     if (extra) extra($('#extra-slot', modal));
 
     $('[data-act="cancel"]', modal).addEventListener('click', close);
@@ -67,7 +82,8 @@ window.ADMIN = true;
     val = val == null ? '' : val;
     if (f.type === 'textarea') {
       const bar = f.emoji ? `<div class="emoji-bar" data-emoji-for="${f.name}">${EMOJIS.map(e => `<button type="button">${e}</button>`).join('')}</div>` : '';
-      return `<div class="field"><label>${esc(f.label)}</label>${bar}<textarea data-f="${f.name}">${esc(val)}</textarea>${hint(f)}</div>`;
+      const fbar = f.format ? `<div class="fmt-bar" data-fmt-for="${f.name}"><button type="button" data-b><b>B</b> ตัวหนา</button><button type="button" data-link>🔗 ลิงก์</button></div>` : '';
+      return `<div class="field"><label>${esc(f.label)}</label>${fbar}${bar}<textarea data-f="${f.name}">${esc(val)}</textarea>${hint(f)}</div>`;
     }
     if (f.type === 'select')
       return `<div class="field"><label>${esc(f.label)}</label><select data-f="${f.name}">${f.options.map(o =>
@@ -152,7 +168,7 @@ window.ADMIN = true;
         { name: 'tags', label: 'แท็ก / เครื่องมือ', type: 'text', hint: WORK_TAGS_HINT },
         { name: 'category', label: 'หมวดหมู่', type: 'text', hint: 'ใช้จัดกลุ่มในตัวกรอง เช่น คู่มือ, รายงาน, เอกสาร, ฐานข้อมูล' },
         { name: 'thumb', label: 'รูปหน้าปก (grid)', type: 'image' },
-        { name: 'description', label: 'คำอธิบาย', type: 'textarea' },
+        { name: 'description', label: 'คำอธิบาย', type: 'textarea', format: true, emoji: true, hint: 'Enter ขึ้นบรรทัดใหม่ · เลือกข้อความแล้วกด B = ตัวหนา · 🔗 = ใส่ลิงก์' },
         { name: 'cta_label', label: 'ปุ่มลิงก์ด้านล่าง (ข้อความ)', type: 'text', hint: 'เว้นว่าง = ไม่แสดงปุ่ม' },
         { name: 'cta_url', label: 'ปุ่มลิงก์ด้านล่าง (URL)', type: 'text', hint: 'เช่น https://line.me/..., mailto:, tel:' },
       ],

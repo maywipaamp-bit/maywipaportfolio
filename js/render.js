@@ -34,6 +34,14 @@
     return `<div class="${cls} slot">${esc(placeholder || '')}</div>`;
   }
 
+  // ข้อความมีรูปแบบ: **ตัวหนา**, [ข้อความ](ลิงก์), ขึ้นบรรทัดด้วย Enter
+  function formatText(str) {
+    let h = esc(str || '');
+    h = h.replace(/\[([^\]\n]+)\]\((https?:\/\/[^\s)]+)\)/g, function (m, t, u) { return '<a href="' + u + '" target="_blank" rel="noopener">' + t + '</a>'; });
+    h = h.replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>');
+    return h;
+  }
+
   const state = { tab: 'works', work: 0, workCat: 'all', expOpen: {}, dots: {} };
   let DATA = null;
 
@@ -125,7 +133,7 @@
           ${media(w.thumb, 'work-thumb', 'ผลงาน ' + (i + 1))}
           <div class="work-info">
             <span class="work-cap-title">${esc(w.title)}</span>
-            <span class="work-desc">${esc(w.description)}</span>
+            <span class="work-desc">${esc((w.description || '').split('**').join(''))}</span>
           </div>
         </div>`).firstElementChild;
       cell.addEventListener('click', () => openWorkScreen(w));
@@ -152,7 +160,7 @@
         </div>
         <div class="ws-body">
           <h2 class="ws-title">${esc(w.title)}</h2>
-          <p class="ws-desc">${esc(w.description)}</p>
+          <p class="ws-desc">${formatText(w.description)}</p>
         </div>
       </div>`;
 
@@ -165,12 +173,13 @@
       car.append(slide);
     });
 
-    // ลากเมาส์เพื่อสไลด์ภาพ (มือถือใช้ปัดนิ้วปกติ)
-    let _d = false, _sx = 0, _sl = 0;
-    car.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') return; _d = true; _sx = e.clientX; _sl = car.scrollLeft; car.classList.add('drag'); });
-    car.addEventListener('pointermove', (e) => { if (!_d) return; car.scrollLeft = _sl - (e.clientX - _sx); });
+    // ลาก/ปัดเพื่อสไลด์ · แตะเพื่อดูรูปใหญ่
+    let _d = false, _sx = 0, _sl = 0, _moved = 0;
+    car.addEventListener('pointerdown', (e) => { _sx = e.clientX; _moved = 0; if (e.pointerType === 'mouse') { _d = true; _sl = car.scrollLeft; car.classList.add('drag'); } });
+    car.addEventListener('pointermove', (e) => { _moved = Math.max(_moved, Math.abs(e.clientX - _sx)); if (_d) car.scrollLeft = _sl - (e.clientX - _sx); });
     const _end = () => { _d = false; car.classList.remove('drag'); };
     car.addEventListener('pointerup', _end); car.addEventListener('pointercancel', _end); car.addEventListener('pointerleave', _end);
+    car.querySelectorAll('.ws-slide').forEach((sl, i) => sl.addEventListener('click', () => { if (_moved < 8) openLightbox(imgs, i); }));
 
     const dots = scr.querySelector('.ws-dots');
     if (imgs.length > 1) {
